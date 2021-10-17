@@ -14,3 +14,4 @@ Yelp dataset consists of 5 smaller files which are `yelp_academic_dataset_busine
 Currently, the `yelp_academic_dataset_business.json` has been cleaned up and renamed as `business_dataset.json` </br>
 
 The dataset will be parsed in Spring Boot Application and pushed to an in memory H2 database.</br>
+Thus all you need to do to get the data into Java classes is just simply extract the data file in resources, e.g `business.zip` and run the Spring Boot Application!
