@@ -7,7 +7,7 @@ In this project, we will discover the Yelp Dataset and manipulate the data obtai
 The 11 GB dataset can be downloaded here: https://www.yelp.com/dataset <br/>
 Dataset documentation can be found here: https://www.yelp.com/dataset/documentation/main <br/>
 
-The dataset is not in proper JSON structure and are not clearly labelled so it is necessary to clean up the dataset using EDA in python.
+The dataset is not in proper JSON structure and are not clearly labelled so it is necessary to do up EDA in python.
 
 Yelp dataset consists of 5 smaller files which are `yelp_academic_dataset_business.json`, `yelp_academic_dataset_checkin.json`, `yelp_academic_dataset_review.json`, `yelp_academic_dataset_tip.json` and `yelp_academic_dataset_user.json`. Java classes that represent each JSON file will be created.
 
