@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.ArrayList;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
