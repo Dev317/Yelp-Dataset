@@ -25,4 +25,12 @@ public class BusinessService {
     public Business save(Business checkIn) {
         return repository.save(checkIn);
     }
+
+    public List<Business> filterByCity(String city) {
+        return repository.findByCity(city);
+    }
+
+    public List<Business> filterByCityAndCategories(String city, String categories) {
+        return repository.findByCity(city);
+    }
 }

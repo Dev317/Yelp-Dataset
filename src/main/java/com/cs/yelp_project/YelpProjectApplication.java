@@ -24,29 +24,29 @@ public class YelpProjectApplication {
 		System.out.println("started");
 	}
 
-//	@Bean
-//	CommandLineRunner runnerBusiness(BusinessService businessService) {
-//		return args -> {
-//
-//			ObjectMapper mapper = new ObjectMapper();
-//
-//			// In case any unknown values are not registered
-////			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-//			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-//
-//			TypeReference<List<Business>> typeReference = new TypeReference<List<Business>>(){};
-//
-//			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
-//
-//			try {
-//				List<Business> businesses = mapper.readValue(inputStream,typeReference);
-//				businessService.save(businesses);
-//				System.out.println("Businesses Saved!");
-//			} catch (IOException e) {
-//				System.out.println(e.getMessage());
-//			}
-//		};
-//	}
+	@Bean
+	CommandLineRunner runnerBusiness(BusinessService businessService) {
+		return args -> {
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			// In case any unknown values are not registered
+//			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+
+			TypeReference<List<Business>> typeReference = new TypeReference<List<Business>>(){};
+
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
+
+			try {
+				List<Business> businesses = mapper.readValue(inputStream,typeReference);
+				businessService.save(businesses);
+				System.out.println("Businesses Saved!");
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+		};
+	}
 
 	@Bean
 	CommandLineRunner runnerCheckIn(CheckInService checkinService) {

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BusinessRepository extends JpaRepository<Business,String> {
     List<Business> findByCity(String city);
+
+    List<Business> findByCityAndCategories(String city, String categories);
 }

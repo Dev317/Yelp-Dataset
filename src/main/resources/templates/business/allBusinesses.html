@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>All Businesses</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1> Businesses </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th> Title </th>
+                            <th> Author </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${businesses.empty}">
+                            <td colspan="2"> No Businesses Available </td>
+                        </tr>
+                        <tr th:each="business : ${businesses}">
+                            <td><span th:text="${business.title}"> Title </span></td>
+                            <td><span th:text="${business.author}"> Author </span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
