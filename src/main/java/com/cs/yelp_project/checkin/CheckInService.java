@@ -14,11 +14,11 @@ public class CheckInService {
         this.repository = repository;
     }
 
-    public Iterable<CheckIn> list() {
+    public List<CheckIn> list() {
         return repository.findAll();
     }
 
-    public Iterable<CheckIn> save(List<CheckIn> list) {
+    public List<CheckIn> save(List<CheckIn> list) {
         return repository.saveAll(list);
     }
 

@@ -1,15 +1,14 @@
 package com.cs.yelp_project.business;
 
+import com.cs.yelp_project.citystate.CityState;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -39,7 +38,24 @@ public class Business {
     @Embedded
     private @JsonProperty("hours") Hours hours;
 
+//    @ManyToMany(mappedBy = "businesses")
+//    private List<Category> category_name;
+
+    private int totalCheckin;
+
+
     public Business() {}
 
+//    public void setCategory_name(List<Category> categoryList) {
+//        this.category_name = categoryList;
+//    }
+
+    public void setTotalCheckin(int totalCheckin) {
+        this.totalCheckin = totalCheckin;
+    }
+
+    public int getTotalCheckin() {
+        return totalCheckin;
+    }
 }
 
