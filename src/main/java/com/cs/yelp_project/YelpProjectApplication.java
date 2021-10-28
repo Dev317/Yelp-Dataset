@@ -9,6 +9,11 @@ import com.cs.yelp_project.checkin.CheckInRepository;
 import com.cs.yelp_project.checkin.CheckInService;
 
 import com.cs.yelp_project.citystate.CityState;
+import com.cs.yelp_project.kmeans.Centroid;
+import com.cs.yelp_project.kmeans.EuclideanDistance;
+import com.cs.yelp_project.kmeans.Record;
+import com.cs.yelp_project.kmeans.KMeans;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +39,7 @@ public class YelpProjectApplication {
         return result;
     }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		ApplicationContext ctx = SpringApplication.run(YelpProjectApplication.class, args);
 		System.out.println("started");
 
@@ -46,7 +51,7 @@ public class YelpProjectApplication {
 		List<Category> categoryList = new ArrayList<>();
 		List<Business> businessList = businessService.list();
 
-		// findTotalCheckin in each business
+		// findTotalCheckin in each business -- bottle nek
 		int counter = 0;
 		List<CheckIn> checkInList = checkInService.list();
 		for (CheckIn checkIn : checkInList) {
@@ -66,7 +71,6 @@ public class YelpProjectApplication {
 				}
 			}
 		}
-
 
 		// Getting all the categories and store into database
 		List<String> categoriesWord = new ArrayList<>();
@@ -187,7 +191,6 @@ public class YelpProjectApplication {
 				categoriesList.add(new Category(category));
 			}
 
-
 //			frequencyMap = valueSort(frequencyMap);
 
 			cityState.setCategoryList(categoriesList);
@@ -205,13 +208,39 @@ public class YelpProjectApplication {
 //		}
 
 		// Testing
-		System.out.println("Sorted by categories:");
-		for (int idx = 0; idx < 5; idx++) {
-			CityState cityState = cityStateList.get(idx);
-			List frequencyList = sortMap(cityState);
-			System.out.println(cityState.getName());
-			System.out.println(frequencyList);
-		}
+//		System.out.println("Sorted by categories:");
+//		for (int idx = 0; idx < 5; idx++) {
+//			CityState cityState = cityStateList.get(idx);
+//			List frequencyList = sortMap(cityState);
+//			System.out.println(cityState.getName());
+//			System.out.println(frequencyList);
+//		}
+
+		// Implementing K means
+		final String[] kMeansCategories = new String[] {"Mexican", "Kebab", "Latin American", "Tex-Mex","New Mexican Cuisine", "Wraps"};
+
+
+		List<Record> records = createRecords(cityStateList, kMeansCategories);
+
+		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 7, new EuclideanDistance(), 1000);
+
+		// Printing the cluster configuration
+		clusters.forEach((key, value) -> {
+			System.out.println("-------------------------- CLUSTER ----------------------------");
+
+			// Sorting the coordinates to see the most significant tags first.
+//			System.out.println(sortedCentroid(key));
+//			String members = String.join(", ", value.stream().map(Record::getDescription).collect(toSet()));
+//			System.out.print(members);
+			System.out.println(key.toString());
+
+			for (Record record : value) {
+				System.out.print(record.toString());
+			}
+
+			System.out.println();
+			System.out.println();
+		});
 
 	}
 
@@ -221,10 +250,35 @@ public class YelpProjectApplication {
 		Collections.sort(sortedList, Collections.reverseOrder(new Comparator<Map.Entry<String, Integer>>() {
 			@Override
 			public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-				return -e1.getValue().compareTo(e2.getValue());
+				return e1.getValue().compareTo(e2.getValue());
 			}
 		}));
 		return sortedList;
+	}
+
+	public static List<Record> createRecords(List<CityState> cityStateList, String[] tags) throws IOException {
+		List<Record> records = new ArrayList<>();
+
+		for (CityState cityState : cityStateList) {
+			String cityName = cityState.getName();
+			Map<String, Integer> currentFrequencyMap = cityState.getCategoryFrequency();
+			Map<String, Double> tagMap = new HashMap<>();
+
+			for (String key : tags) {
+				if (currentFrequencyMap.get(key) != null) {
+					tagMap.put(key, currentFrequencyMap.get(key).doubleValue());
+				} else {
+					tagMap.put(key, .0);
+				}
+			}
+
+
+			// Only keep popular tags.
+
+			records.add(new Record(cityName, tagMap));
+		}
+
+		return records;
 	}
 
 

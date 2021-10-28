@@ -1,5 +1,7 @@
 package com.cs.yelp_project.kmeans;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -7,18 +9,21 @@ import java.util.Objects;
  * Encapsulates all feature values for a few attributes. Optionally each record
  * can be described with the {@link #description} field.
  */
+@Component
 public class Record {
 
     /**
      * The record description. For example, this can be the artist name for the famous musician
      * example.
      */
-    private final String description;
+    private  String description;
 
     /**
      * Encapsulates all attributes and their corresponding values, i.e. features.
      */
-    private final Map<String, Double> features;
+    private  Map<String, Double> features;
+
+
 
     public Record(String description, Map<String, Double> features) {
         this.description = description;
@@ -27,6 +32,9 @@ public class Record {
 
     public Record(Map<String, Double> features) {
         this("", features);
+    }
+
+    public Record() {
     }
 
     public String getDescription() {

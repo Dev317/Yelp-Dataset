@@ -1,5 +1,7 @@
 package com.cs.yelp_project.kmeans;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +17,11 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Ali Dehghani
  */
+@Component
 public class KMeans {
 
     private KMeans() {
-        throw new IllegalAccessError("You shouldn't call this constructor");
+//        throw new IllegalAccessError("You shouldn't call this constructor");
     }
 
     /**
