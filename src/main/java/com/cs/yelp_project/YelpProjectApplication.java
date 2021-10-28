@@ -105,10 +105,8 @@ public class YelpProjectApplication {
 			}
 		}
 
-		// transfer back to cityStateList object list
 		Set<String> keySet = map.keySet();
 		for (String key : keySet) {
-//			System.out.println(key);
 			List<Business> businesses = map.get(key);
 			for (CityState city : cityStateList) {
 				if (city.getName().equals(key)) {
@@ -118,7 +116,6 @@ public class YelpProjectApplication {
 			}
 		}
 
-//		 Getting all the categories in each cityState
 		for (CityState cityState : cityStateList) {
 			Map<String,Integer> frequencyMap = new TreeMap<String,Integer >();
 			List<Business> businessesInCityState = cityState.getBusinessList();
