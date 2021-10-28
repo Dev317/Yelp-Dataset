@@ -116,13 +116,11 @@ public class YelpProjectApplication {
 			}
 		}
 
+		List<String> categoriesFilter = Arrays.asList("Mexican", "Kebab", "Latin American", "Tex-Mex", "New Mexican Cuisine", "Wraps");
+
 		for (CityState cityState : cityStateList) {
 			Map<String,Integer> frequencyMap = new TreeMap<String,Integer >();
 			List<Business> businessesInCityState = cityState.getBusinessList();
-			List<String> categoriesInCityState = new ArrayList<>();
-			categoriesInCityState.add("Mexican");
-			categoriesInCityState.add("New Mexican Cuisine");
-			List<Category> categoriesList = new ArrayList<>();
 
 			for (Business business : businessesInCityState) {
 				int totalCheckin = business.getTotalCheckin();
@@ -130,7 +128,7 @@ public class YelpProjectApplication {
 				String[] categories = parse(business.getCategories());
 
 				for (String category : categories) {
-					if (category.equals("Mexican") || category.equals("New Mexican Cuisine")) {
+					if (categoriesFilter.contains(category)) {
 						if (!frequencyMap.containsKey(category)) {
 							frequencyMap.put(category,totalCheckin);
 						} else {
@@ -141,10 +139,6 @@ public class YelpProjectApplication {
 				}
 			}
 
-			categoriesList.add(new Category("Mexican"));
-			categoriesList.add(new Category("New Mexican Cuisine"));
-
-			cityState.setCategoryList(categoriesList);
 			cityState.setCategoryFrequency(frequencyMap);
 		}
 
