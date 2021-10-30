@@ -294,7 +294,7 @@ public class YelpProjectApplication {
 
 			TypeReference<List<Business>> typeReference = new TypeReference<List<Business>>(){};
 
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business-mexican-turkish-only.json");
 
 			try {
 				List<Business> businesses = mapper.readValue(inputStream,typeReference);
@@ -315,7 +315,7 @@ public class YelpProjectApplication {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<List<CheckIn>> typeReference = new TypeReference<List<CheckIn>>(){};
 
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin-mexican-turkish-only.json");
 
 			try {
 				List<CheckIn> checkIns = mapper.readValue(inputStream,typeReference);
