@@ -50,6 +50,9 @@ public class YelpProjectApplication {
 		List<CityState> cityStateList = new ArrayList<>();
 		List<Business> businessList = businessService.list();
 
+		List<CityState> oldCityStateList = new ArrayList<>();
+		List<Business> oldBusinessList = businessService.list();
+
 
 		/*
 		* Switch to choose between old implementation and new implementation
@@ -79,30 +82,30 @@ public class YelpProjectApplication {
 		* complexity = O(n + m) = O(n)
 		 */
 		// STEP 1 OLD IMPLEMENTATION START//
-		// long oldStep1Time = System.nanoTime();
-		// int counter = 0;
-		// List<CheckIn> checkInList = checkInService.list();
-		// for (CheckIn checkIn : checkInList) {
+		long oldStep1Time = System.nanoTime();
+		int counter = 0;
+		List<CheckIn> oldCheckInList = checkInService.list();
+		for (CheckIn checkIn : oldCheckInList) {
 
-		// 	String businessId = checkIn.getBusiness_id();
+			String businessId = checkIn.getBusiness_id();
 
-		// 	for (Business business : businessList) {
-		// 		if (counter > checkInList.size()) {
-		// 			System.out.println("Repeat ALERT!!!");
-		// 			break;
-		// 		}
+			for (Business business : oldBusinessList) {
+				if (counter > oldCheckInList.size()) {
+					System.out.println("Repeat ALERT!!!");
+					break;
+				}
 
-		// 		if (counter < checkInList.size() && businessId.contains(business.getBusiness_id())) {
-		// 			business.setTotalCheckin(checkIn.getTotal_checkin());
-		// 			counter++;
-		// 			break;
-		// 		}
-		// 	}
-		// }
-		// // STEP 1 OLD IMPLEMENTATION END//
-		// oldStep1Time = System.nanoTime() - oldStep1Time;
-		// oldImplementationTimes += "\nStep 1 time elapsed: " + oldStep1Time;
-		// totalOldTime += oldStep1Time;
+				if (counter < oldCheckInList.size() && businessId.contains(business.getBusiness_id())) {
+					business.setTotalCheckin(checkIn.getTotal_checkin());
+					counter++;
+					break;
+				}
+			}
+		}
+		// STEP 1 OLD IMPLEMENTATION END//
+		oldStep1Time = System.nanoTime() - oldStep1Time;
+		oldImplementationTimes += "\nStep 1 time elapsed: " + oldStep1Time;
+		totalOldTime += oldStep1Time;
 
 		// STEP 1 NEW IMPLEMENTATION START//
 		long newStep1Time = System.nanoTime();
@@ -131,7 +134,7 @@ public class YelpProjectApplication {
 		newImplementationTimes += "\nStep 1 time elapsed: " + newStep1Time;
 		totalNewTime += newStep1Time;
 		sideBySideComparison += "\nStep 1:";
-		// sideBySideComparison += "\nOld: " + oldStep1Time;
+		sideBySideComparison += "\nOld: " + oldStep1Time;
 		sideBySideComparison += "\nNew: " + newStep1Time;
 
 
@@ -151,40 +154,43 @@ public class YelpProjectApplication {
 		 * complexity =
 		 */
 		// STEP 2 OLD IMPLEMENTATION START//
-		// long oldStep2Time = System.nanoTime();
+		long oldStep2Time = System.nanoTime();
 
-		// // Getting all the categories and store into database
-		// List<String> categoriesWord = new ArrayList<>();
-		// for (Business business : businessList) {
-		// 	String[] categories = parse(business.getCategories());
+		// Getting all the categories and store into database
+		List<String> oldCategoriesWord = new ArrayList<>();
+		for (Business business : oldBusinessList) {
+			String[] categories = parse(business.getCategories());
 
-		// 	for (String cat:categories) {
-		// 		if (!categoriesWord.contains(cat)) {
-		// 			categoriesWord.add(cat);
-		// 		}
-		// 	}
-		// }
+			for (String cat:categories) {
+				if (!oldCategoriesWord.contains(cat)) {
+					oldCategoriesWord.add(cat);
+				}
+			}
+		}
 
-		// for (String cat: categoriesWord) {
-		// 	categoryService.save(new Category(cat));
-		// }
+		for (String cat: oldCategoriesWord) {
+			categoryService.save(new Category(cat));
+		}
 		// STEP 2 OLD IMPLEMENTATION END//
-		// oldStep2Time = System.nanoTime() - oldStep2Time;
-		// oldImplementationTimes += "\nStep 2 time elapsed: " + oldStep2Time;
-		// totalOldTime += oldStep2Time;
+		oldStep2Time = System.nanoTime() - oldStep2Time;
+		oldImplementationTimes += "\nStep 2 time elapsed: " + oldStep2Time;
+		totalOldTime += oldStep2Time;
 
 		// STEP 2 NEW IMPLEMENTATION START//
 		long newStep2Time = System.nanoTime();
 		categoryService.save(new Category("Mexican"));
 		categoryService.save(new Category("New Mexican Cuisine"));
-		categoryService.save(new Category("Nightlife"));
+		categoryService.save(new Category("Latin American"));
+		categoryService.save(new Category("Tex-Mex"));
+		categoryService.save(new Category("Wraps"));
+		categoryService.save(new Category("Kebab"));
 
 		// STEP 2 NEW IMPLEMENTATION END//
 		newStep2Time = System.nanoTime() - newStep2Time;
 		newImplementationTimes += "\nStep 2 time elapsed: " + newStep2Time;
 		totalNewTime += newStep2Time;
 		sideBySideComparison += "\nStep 2:";
-		// sideBySideComparison += "\nOld: " + oldStep2Time;
+		sideBySideComparison += "\nOld: " + oldStep2Time;
 		sideBySideComparison += "\nNew: " + newStep2Time;
 
 
@@ -204,21 +210,21 @@ public class YelpProjectApplication {
 		 * complexity =
 		 */
 		// STEP 3 OLD IMPLEMENTATION START//
-		// long oldStep3Time = System.nanoTime();
-		// // Getting all the states
-		// List<String> cityNameList = new ArrayList<>();
-		// for (Business business : businessList) {
-		// 	String cityName =  business.getCity();
+		long oldStep3Time = System.nanoTime();
+		// Getting all the states
+		List<String> oldCityNameList = new ArrayList<>();
+		for (Business business : oldBusinessList) {
+			String cityName =  business.getCity();
 
-		// 	if (!cityNameList.contains(cityName)) {
-		// 		cityNameList.add(cityName);
-		// 		cityStateList.add( new CityState(cityName));
-		// 	}
-		// }
+			if (!oldCityNameList.contains(cityName)) {
+				oldCityNameList.add(cityName);
+				oldCityStateList.add( new CityState(cityName));
+			}
+		}
 		// STEP 3 OLD IMPLEMENTATION END//
-		// oldStep3Time = System.nanoTime() - oldStep3Time;
-		// oldImplementationTimes += "\nStep 3 time elapsed: " + oldStep3Time;
-		// totalOldTime += oldStep3Time;
+		oldStep3Time = System.nanoTime() - oldStep3Time;
+		oldImplementationTimes += "\nStep 3 time elapsed: " + oldStep3Time;
+		totalOldTime += oldStep3Time;
 
 		// STEP 3 NEW IMPLEMENTATION START//
 		long newStep3Time = System.nanoTime();
@@ -232,7 +238,7 @@ public class YelpProjectApplication {
 		newImplementationTimes += "\nStep 3 time elapsed: " + newStep3Time;
 		totalNewTime += newStep3Time;
 		sideBySideComparison += "\nStep 3:";
-		// sideBySideComparison += "\nOld: " + oldStep3Time;
+		sideBySideComparison += "\nOld: " + oldStep3Time;
 		sideBySideComparison += "\nNew: " + newStep3Time;
 
 
@@ -249,60 +255,49 @@ public class YelpProjectApplication {
 		 * complexity =
 		 */
 		// STEP 4 OLD IMPLEMENTATION START//
-// 		long oldStep4Time = System.nanoTime();
+		long oldStep4Time = System.nanoTime();
 
-// 		// Getting all the businesses in each state
-// 		Map<String, List<Business>> map = new HashMap<>();
+		// Getting all the businesses in each state
+		Map<String, List<Business>> oldMap = new HashMap<>();
 
-// 		for (Business business : businessList) {
-// 			String cityName = business.getCity();
+		for (Business business : oldBusinessList) {
+			String cityName = business.getCity();
 
-// 			String cityState = null;
+			String cityState = null;
 
-// 			for (String tempCityState : cityNameList) {
-// 				if (tempCityState.equals(cityName)) {
-// 					cityState = tempCityState;
-// 					break;
-// 				}
-// 			}
+			for (String tempCityState : cityNameList) {
+				if (tempCityState.equals(cityName)) {
+					cityState = tempCityState;
+					break;
+				}
+			}
 
-// 			if (!map.containsKey(cityState)) {
-// 				List<Business> newList = new ArrayList<>();
-// 				newList.add(business);
-// 				map.put(cityState,newList);
-// 			} else {
-// 				List<Business> currList = map.get(cityState);
-// 				currList.add(business);
-// 				map.put(cityState,currList);
-// 			}
-// 		}
+			if (!oldMap.containsKey(cityState)) {
+				List<Business> newList = new ArrayList<>();
+				newList.add(business);
+				oldMap.put(cityState,newList);
+			} else {
+				List<Business> currList = oldMap.get(cityState);
+				currList.add(business);
+				oldMap.put(cityState,currList);
+			}
+		}
 
-// 		// transfer back to cityStateList object list
-// 		Set<String> keySet = map.keySet();
-// 		for (String key : keySet) {
-// //			System.out.println(key);
-// 			List<Business> businesses = map.get(key);
-// 			for (CityState city : cityStateList) {
-// 				if (city.getName().equals(key)) {
-// 					city.setBusinessList(businesses);
-// 					break;
-// 				}
-// 			}
-// 		}
-
-// 		// test
-// //		for (CityState city : cityStateList) {
-// //			List<Business> cityBusinessList = city.getBusinessList();
-// //			String result = "" + city.getName() + ":";
-// //			for (Business business: cityBusinessList) {
-// //				result += business.getName() + " ";
-// //			}
-// //			System.out.println(result);
-// //		}
-// 		// STEP 4 OLD IMPLEMENTATION END//
-// 		oldStep4Time = System.nanoTime() - oldStep4Time;
-// 		oldImplementationTimes += "\nStep 4 time elapsed: " + oldStep4Time;
-// 		totalOldTime += oldStep4Time;
+		// transfer back to cityStateList object list
+		Set<String> oldKeySet = oldMap.keySet();
+		for (String key : oldKeySet) {
+			List<Business> businesses = oldMap.get(key);
+			for (CityState city : oldCityStateList) {
+				if (city.getName().equals(key)) {
+					city.setBusinessList(businesses);
+					break;
+				}
+			}
+		}
+ 		// STEP 4 OLD IMPLEMENTATION END//
+		oldStep4Time = System.nanoTime() - oldStep4Time;
+		oldImplementationTimes += "\nStep 4 time elapsed: " + oldStep4Time;
+		totalOldTime += oldStep4Time;
 
 		// STEP 4 NEW IMPLEMENTATION START//
 		long newStep4Time = System.nanoTime();
@@ -347,7 +342,7 @@ public class YelpProjectApplication {
 		newImplementationTimes += "\nStep 4 time elapsed: " + newStep4Time;
 		totalNewTime += newStep4Time;
 		sideBySideComparison += "\nStep 4:";
-		// sideBySideComparison += "\nOld: " + oldStep4Time;
+		sideBySideComparison += "\nOld: " + oldStep4Time;
 		sideBySideComparison += "\nNew: " + newStep4Time;
 
 
@@ -364,54 +359,52 @@ public class YelpProjectApplication {
 		 * complexity =
 		 */
 		// STEP 5 OLD IMPLEMENTATION START//
-// 		long oldStep5Time = System.nanoTime();
+		long oldStep5Time = System.nanoTime();
 
-// //		 Getting all the categories in each cityState
-// 		for (CityState cityState : cityStateList) {
-// 			Map<String,Integer> frequencyMap = new TreeMap<String,Integer >();
-// 			List<Business> businessesInCityState = cityState.getBusinessList();
-// 			List<String> categoriesInCityState = new ArrayList<>();
-// 			List<Category> categoriesList = new ArrayList<>();
+//		 Getting all the categories in each cityState
+		for (CityState cityState : oldCityStateList) {
+			Map<String,Integer> frequencyMap = new TreeMap<String,Integer >();
+			List<Business> businessesInCityState = cityState.getBusinessList();
+			List<String> categoriesInCityState = new ArrayList<>();
+			List<Category> categoriesList = new ArrayList<>();
 
-// 			for (Business business : businessesInCityState) {
-// 				int totalCheckin = business.getTotalCheckin();
+			for (Business business : businessesInCityState) {
+				int totalCheckin = business.getTotalCheckin();
 
-// 				List<String> businessCategoryList = new ArrayList<>();
+				List<String> businessCategoryList = new ArrayList<>();
 
-// 				String[] categories = parse(business.getCategories());
+				String[] categories = parse(business.getCategories());
 
-// 				for (String category : categories) {
-// 					businessCategoryList.add(category);
-// 				}
+				for (String category : categories) {
+					businessCategoryList.add(category);
+				}
 
-// 				for (String category: businessCategoryList) {
-// 					if (!categoriesInCityState.contains(category)) {
-// 						categoriesInCityState.add(category);
-// 					}
+				for (String category: businessCategoryList) {
+					if (!categoriesInCityState.contains(category)) {
+						categoriesInCityState.add(category);
+					}
 
-// 					if (!frequencyMap.containsKey(category)) {
-// 						frequencyMap.put(category,totalCheckin);
-// 					} else {
-// 						int value = frequencyMap.get(category);
-// 						frequencyMap.put(category, value + totalCheckin);
-// 					}
+					if (!frequencyMap.containsKey(category)) {
+						frequencyMap.put(category,totalCheckin);
+					} else {
+						int value = frequencyMap.get(category);
+						frequencyMap.put(category, value + totalCheckin);
+					}
 
-// 				}
-// 			}
+				}
+			}
 
-// 			for (String category : categoriesInCityState) {
-// 				categoriesList.add(new Category(category));
-// 			}
+			for (String category : categoriesInCityState) {
+				categoriesList.add(new Category(category));
+			}
 
-// //			frequencyMap = valueSort(frequencyMap);
-
-// 			cityState.setCategoryList(categoriesList);
-// 			cityState.setCategoryFrequency(frequencyMap);
-// 		}
-// 		// STEP 5 OLD IMPLEMENTATION END//
-// 		oldStep5Time = System.nanoTime() - oldStep5Time;
-// 		oldImplementationTimes += "\nStep 5 time elapsed: " + oldStep5Time;
-// 		totalOldTime += oldStep5Time;
+			cityState.setCategoryList(categoriesList);
+			cityState.setCategoryFrequency(frequencyMap);
+		}
+		// STEP 5 OLD IMPLEMENTATION END//
+		oldStep5Time = System.nanoTime() - oldStep5Time;
+		oldImplementationTimes += "\nStep 5 time elapsed: " + oldStep5Time;
+		totalOldTime += oldStep5Time;
 
 		// STEP 5 NEW IMPLEMENTATION START//
 		long newStep5Time = System.nanoTime();
@@ -446,7 +439,7 @@ public class YelpProjectApplication {
 		newImplementationTimes += "\nStep 5 time elapsed: " + newStep5Time;
 		totalNewTime += newStep5Time;
 		sideBySideComparison += "\nStep 5:";
-		// sideBySideComparison += "\nOld: " + oldStep5Time;
+		sideBySideComparison += "\nOld: " + oldStep5Time;
 		sideBySideComparison += "\nNew: " + newStep5Time;
 
 		/*
