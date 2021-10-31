@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>K-means Algorithm</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body onload="InitMap();">
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Cluster Map</a>
+</nav>
+
+<main role="main" class="container">
+
+    <div class="starter-template">
+        <h1>Spring Boot Web Thymeleaf Example</h1>
+        <h2>
+            <span th:text="'Hello, ' + ${message}"></span>
+        </h2>
+    </div>
+
+    <div id="map" style="height: 500px; width: auto;">
+    </div>
+
+</main>
+<!-- /.container -->
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2Eh1XwtosJlO0T1gxmcRgf_Oha3ymULs"></script>
+<script type="text/javascript"  th:inline="javascript">
+
+        /*<![CDATA[*/
+        var locations = /*[[${cityStates}]]*/
+        /*]]>*/
+
+        function InitMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: new google.maps.LatLng(37.090240, -95.712891),
+                // mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            var infowindow = new google.maps.InfoWindow();
+            var marker, i;
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map,
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/" + locations[i][3] + "-dot.png"
+                    }
+                });
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        infowindow.setPosition(locations[i][1])
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
+        }
+   </script>
+</body>
+</html>
