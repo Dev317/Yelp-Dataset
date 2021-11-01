@@ -17,6 +17,7 @@ import com.cs.yelp_project.kmeans.KMeans;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.source.tree.Tree;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -138,11 +139,28 @@ public class YelpProjectApplication {
 		 * complexity = O(m * a * b + b) = O(n^3)
 		 * estimate: O(m * 10 * b + b) = O(n^2) since number of categories usually < 10
 		 *
-		 * new implementation:
+		 * Step 3: get all the states
 		 *
-		 * complexity =
+		 * old implementation:
+		 * 	loop through all businesses to get their city 			m: number of businesses
+		 * 			check if cityNameList contains it already		* c: number of cities added so far
+		 * complexity = O(m * c) = O(n^2)
+		 *
+		 *
+		 *
+		 * new implementation combining step 2 and 3:
+		 * 	loop through all businesses										m: number of businesses
+		 * 		get categories:
+		 * 		loop through each category									* a: number of categories
+		 * 			if it is in a treemap, skip
+		 * 			else add it to the treemap and save it to the database
+		 * 		get city and state:
+		 * 			if it is in the treemap, skip
+		 * 			else add it to the treemap and save it to the database  * c : number of cities and states
+		 *
+		 * complexity = O(m * a) <= O(n^2)
 		 */
-		// STEP 2 OLD IMPLEMENTATION START//
+		// STEP 2, 3 OLD IMPLEMENTATION START//
 		long oldStep2Time = System.nanoTime();
 
 		// Getting all the categories and store into database
@@ -165,36 +183,9 @@ public class YelpProjectApplication {
 		oldImplementationTimes += "\nStep 2 time elapsed: " + oldStep2Time;
 		totalOldTime += oldStep2Time;
 
-		// STEP 2 NEW IMPLEMENTATION START//
-		long newStep2Time = System.nanoTime();
-		//TODO step 2 new implementation code goes here
-
-		// STEP 2 NEW IMPLEMENTATION END//
-		newStep2Time = System.nanoTime() - newStep2Time;
-		newImplementationTimes += "\nStep 2 time elapsed: " + newStep2Time;
-		totalNewTime += newStep2Time;
-		sideBySideComparison += "\nStep 2:";
-		sideBySideComparison += "\nOld: " + oldStep2Time;
-		sideBySideComparison += "\nNew: " + newStep2Time;
-
-
-
-		/*
-		 * Step 3: get all the states
-		 *
-		 * old implementation:
-		 * 	loop through all businesses to get their city 			m: number of businesses
-		 * 			check if cityNameList contains it already		* c: number of cities added so far
-		 * complexity = O(m * c) = O(n^2)
-		 *
-		 * complexity =
-		 *
-		 * new implementation:
-		 *
-		 * complexity =
-		 */
 		// STEP 3 OLD IMPLEMENTATION START//
 		long oldStep3Time = System.nanoTime();
+
 		// Getting all the states
 		List<String> cityNameList = new ArrayList<>();
 		for (Business business : businessList) {
@@ -210,26 +201,88 @@ public class YelpProjectApplication {
 		oldImplementationTimes += "\nStep 3 time elapsed: " + oldStep3Time;
 		totalOldTime += oldStep3Time;
 
-		// STEP 3 NEW IMPLEMENTATION START//
-		long newStep3Time = System.nanoTime();
-		//TODO step 3 new implementation code goes here
+		// STEP 2 + 3 NEW IMPLEMENTATION START//
+		long newStep2Time = System.nanoTime();
+		//TODO step 2 new implementation code goes here
+		Map<String, Boolean> categoriesTree = new TreeMap<>();
+		Map<String, Boolean> cityNameTree = new TreeMap<>();
 
-		// STEP 3 NEW IMPLEMENTATION END//
-		newStep3Time = System.nanoTime() - newStep3Time;
-		newImplementationTimes += "\nStep 3 time elapsed: " + newStep3Time;
-		totalNewTime += newStep3Time;
-		sideBySideComparison += "\nStep 3:";
-		sideBySideComparison += "\nOld: " + oldStep3Time;
-		sideBySideComparison += "\nNew: " + newStep3Time;
+		for (Business business : businessList) {
+			String[] categories = business.getCategories().split(", ");
+			for (String cat : categories) {
+				if(!categoriesTree.containsKey(cat)) {
+					categoriesTree.put(cat, true);
+					categoryService.save(new Category((cat)));
+				}
+			}
+
+			String cityName = business.getCity();
+			if(!cityNameTree.containsKey(cityName)) {
+				cityNameTree.put(cityName, true);
+				}
+		}
+
+		// STEP 2 + 3 NEW IMPLEMENTATION END//
+		newStep2Time = System.nanoTime() - newStep2Time;
+		newImplementationTimes += "\nStep2+3time elapsed: " + newStep2Time;
+		totalNewTime += newStep2Time;
+		sideBySideComparison += "\nStep 2 + 3:";
+		sideBySideComparison += "\nOld: " + (oldStep2Time + oldStep3Time);
+		sideBySideComparison += "\nNew: " + newStep2Time;
 
 
 
 		/*
-		 * Step 4: Get all the businesses in each state then transfer back to cityState object list
+		 * Step 3: get all the states
 		 *
 		 * old implementation:
+		 * 	loop through all businesses to get their city 			m: number of businesses
+		 * 			check if cityNameList contains it already		* c: number of cities added so far
+		 * complexity = O(m * c) = O(n^2)
 		 *
-		 * complexity =
+		 * new implementation:
+		 * 	loop through all businesses to get their city 			m: number of businesses
+		 * 			check if cityNameTreeMap contains it already	1
+		 *
+		 * complexity = O(m) = O(n)
+		 */
+
+//		// STEP 3 NEW IMPLEMENTATION START//
+//		long newStep3Time = System.nanoTime();
+//		//TODO step 3 new implementation code goes here
+//
+//		// STEP 3 NEW IMPLEMENTATION END//
+//		newStep3Time = System.nanoTime() - newStep3Time;
+//		newImplementationTimes += "\nStep 3 time elapsed: " + newStep3Time;
+//		totalNewTime += newStep3Time;
+//		sideBySideComparison += "\nStep 3:";
+//		sideBySideComparison += "\nOld: " + oldStep3Time;
+//		sideBySideComparison += "\nNew: " + newStep3Time;
+
+
+
+		/*
+		 Step 4: Get all the businesses in each state then transfer back to city object list
+		 *
+		 * old implementation:
+		 *   created a mapping where city is the key and list of business in the specific city is the value
+		 *   loop through the business list : n number of business entries
+		 *     find business's city name  : O(1) operation
+		 *    loop through city name list  : m number of city names
+		 *         check whether the found business's city name is inside: O(1) operation
+		 *         assign to a local variable city : O(1) operation
+		 *
+		 *     check if the mapping contains that city key, if not create a new key pair value : O(1) operation
+		 *                            if there is, update the value for the key : O(1) operation
+		 *
+		 *
+		 * loop through the key set in the map : m number of city names
+		 *     retrieve the business list of each key : O(1) operation
+		 *     loop through the city list : m number of city objects
+		 *                 find the matching city name : O(1) operation
+		 *                 update that city's latest business list : O(1) operation
+		 *
+		 * complexity = O (n*m + m*m) = O(nm + m^2)
 		 *
 		 * new implementation:
 		 *
@@ -277,15 +330,6 @@ public class YelpProjectApplication {
 			}
 		}
 
-		// test
-//		for (CityState city : cityStateList) {
-//			List<Business> cityBusinessList = city.getBusinessList();
-//			String result = "" + city.getName() + ":";
-//			for (Business business: cityBusinessList) {
-//				result += business.getName() + " ";
-//			}
-//			System.out.println(result);
-//		}
 		// STEP 4 OLD IMPLEMENTATION END//
 		oldStep4Time = System.nanoTime() - oldStep4Time;
 		oldImplementationTimes += "\nStep 4 time elapsed: " + oldStep4Time;
@@ -306,11 +350,32 @@ public class YelpProjectApplication {
 
 
 		/*
-		 * Step 5: Getting all the categories in each cityState
+		 Step 5: Getting all the categories in each cityState
 		 *
 		 * old implementation:
+		 *   loop through city list : n number of city objects
+		 *     create a map where key is the category and value is the number of checkins
+		 *    retrieve list of businesses in the city: O(1) operation
+		 *     create a new string list to find all category names in a city
+		 *     create a new list to find all categories in a city
 		 *
-		 * complexity =
+		 *     loop through the business list : m number of businesses
+		 *       retrieve the business' total checkins : O(1) operation
+		 *       retrieve the business' string category : O(1) operation
+		 *       create a new category list
+		 *
+		 *       loop through the string category: l number of categories
+		 *         update the business' category list: O(1) operation
+		 *
+		 *       loop through the business' category: l number of categories
+		 *         check if the city category list contains the category: O(1) operation
+		 *           if not create a new key pair value: O(1) operation
+		 *          if there is, update the new checkin for each category: O(1) operation
+		 *
+		 *   update city's category list: O(1) operation
+		 *  update city's category frequency mapping: O(1) operation
+		 *
+		 * complexity = O (n * m * (2l)) = O(nml)
 		 *
 		 * new implementation:
 		 *
@@ -486,8 +551,8 @@ public class YelpProjectApplication {
 
 			TypeReference<List<Business>> typeReference = new TypeReference<List<Business>>(){};
 
-//			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business-mexican-turkish-only.json");
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business-mexican-turkish-only.json");
+//			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
 
 			try {
 				List<Business> businesses = mapper.readValue(inputStream,typeReference);
@@ -508,8 +573,8 @@ public class YelpProjectApplication {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<List<CheckIn>> typeReference = new TypeReference<List<CheckIn>>(){};
 
-//			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin-mexican-turkish-only.json");
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin-mexican-turkish-only.json");
+//			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin_dataset.json");
 
 			try {
 				List<CheckIn> checkIns = mapper.readValue(inputStream,typeReference);
