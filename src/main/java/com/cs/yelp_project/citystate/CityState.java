@@ -33,4 +33,14 @@ public class CityState {
     public CityState(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "CityState{" +
+                "name='" + name + '\'' +
+                ", businessList=" + businessList +
+                ", categoryList=" + categoryList +
+                ", categoryFrequency=" + categoryFrequency +
+                '}';
+    }
 }

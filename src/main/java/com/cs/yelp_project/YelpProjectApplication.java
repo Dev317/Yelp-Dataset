@@ -1,11 +1,7 @@
 package com.cs.yelp_project;
 
-import com.cs.yelp_project.business.Business;
-import com.cs.yelp_project.business.BusinessService;
-import com.cs.yelp_project.business.Category;
-import com.cs.yelp_project.business.CategoryService;
+import com.cs.yelp_project.business.*;
 import com.cs.yelp_project.checkin.CheckIn;
-import com.cs.yelp_project.checkin.CheckInRepository;
 import com.cs.yelp_project.checkin.CheckInService;
 
 import com.cs.yelp_project.citystate.CityState;
@@ -26,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootApplication
 public class YelpProjectApplication {
@@ -41,7 +38,6 @@ public class YelpProjectApplication {
 
 	public static void main(String[] args) throws IOException {
 		ApplicationContext ctx = SpringApplication.run(YelpProjectApplication.class, args);
-		System.out.println("started");
 
 		CheckInService checkInService = ctx.getBean(CheckInService.class);
 		BusinessService businessService = ctx.getBean(BusinessService.class);
@@ -50,6 +46,8 @@ public class YelpProjectApplication {
 		List<CityState> cityStateList = new ArrayList<>();
 		List<Category> categoryList = new ArrayList<>();
 		List<Business> businessList = businessService.list();
+		List<BusinessCheckInDTO> businessCheckInDTOS = businessService.listByCategory("Mexican");
+		System.out.println(businessCheckInDTOS);
 
 
 		/*
@@ -84,7 +82,6 @@ public class YelpProjectApplication {
 		int counter = 0;
 		List<CheckIn> checkInList = checkInService.list();
 		for (CheckIn checkIn : checkInList) {
-
 			String businessId = checkIn.getBusiness_id();
 
 			for (Business business : businessList) {
@@ -107,17 +104,28 @@ public class YelpProjectApplication {
 
 		// STEP 1 NEW IMPLEMENTATION START//
 		long newStep1Time = System.nanoTime();
-		Map<String, Integer> checkInMap = new TreeMap<>();
-		for (CheckIn checkIn : checkInList) {
-			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
-		}
-		for (Business business : businessList) {
+//		Map<String, Integer> checkInMap = new TreeMap<>();
+//		for (CheckIn checkIn : checkInList) {
+//			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
+//		}
+//		for (Business business : businessList) {
+//			try {
+//				business.setTotalCheckin(checkInMap.get(business.getBusiness_id()));
+//			} catch (NullPointerException e) {
+//				System.out.println("Business " + business.getBusiness_id() + " does not have enough checkins.");
+//			}
+//		}
+		Hashtable<String, Integer> checkInMap = new Hashtable<>();
+		checkInList.forEach(checkIn -> checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin()));
+		businessList.forEach((business) -> {
 			try {
 				business.setTotalCheckin(checkInMap.get(business.getBusiness_id()));
 			} catch (NullPointerException e) {
 				System.out.println("Business " + business.getBusiness_id() + " does not have enough checkins.");
 			}
-		}
+		});
+
+
 		// STEP 1 NEW IMPLEMENTATION END//
 		newStep1Time = System.nanoTime() - newStep1Time;
 		newImplementationTimes += "\nStep 1 time elapsed: " + newStep1Time;
@@ -168,6 +176,12 @@ public class YelpProjectApplication {
 		// STEP 2 NEW IMPLEMENTATION START//
 		long newStep2Time = System.nanoTime();
 		//TODO step 2 new implementation code goes here
+		HashSet<String> categoriesWordSet = new HashSet<>();
+		for (Business business : businessList) {
+			categoriesWordSet.addAll(Arrays.asList(business.getCategories().split(", ")));
+		}
+		List<String> list = new ArrayList<>(categoriesWordSet);
+		list.forEach(str -> categoryService.save(new Category(str)));
 
 		// STEP 2 NEW IMPLEMENTATION END//
 		newStep2Time = System.nanoTime() - newStep2Time;
@@ -202,7 +216,7 @@ public class YelpProjectApplication {
 
 			if (!cityNameList.contains(cityName)) {
 				cityNameList.add(cityName);
-				cityStateList.add( new CityState(cityName));
+//				cityStateList.add( new CityState(cityName));
 			}
 		}
 		// STEP 3 OLD IMPLEMENTATION END//
@@ -213,6 +227,11 @@ public class YelpProjectApplication {
 		// STEP 3 NEW IMPLEMENTATION START//
 		long newStep3Time = System.nanoTime();
 		//TODO step 3 new implementation code goes here
+		HashSet<String> cityNameSet = new HashSet<>();
+		for (Business business : businessList) {
+			cityNameSet.add(business.getCity());
+		}
+		cityNameSet.forEach(str -> cityStateList.add(new CityState(str)));
 
 		// STEP 3 NEW IMPLEMENTATION END//
 		newStep3Time = System.nanoTime() - newStep3Time;
@@ -294,6 +313,35 @@ public class YelpProjectApplication {
 		// STEP 4 NEW IMPLEMENTATION START//
 		long newStep4Time = System.nanoTime();
 		//TODO step 4 new implementation code goes here
+		Map<String, List<Business>> map2 = new HashMap<>();
+		for (Business business : businessList) {
+			String cityName = business.getCity();
+			String cityState = null;
+			for (String tempCityState : cityNameList) {
+				if (tempCityState.equals(cityName)) {
+					cityState = tempCityState;
+					break;
+				}
+			}
+			if (!map2.containsKey(cityState)) {
+				List<Business> newList = new ArrayList<>();
+				newList.add(business);
+				map2.put(cityState,newList);
+			} else {
+				List<Business> currList = map2.get(cityState);
+				currList.add(business);
+				map2.put(cityState,currList);
+			}
+		}
+
+		// transfer back to cityStateList object list
+		HashSet<String> hashKeySet = new HashSet<>(map2.keySet());
+		hashKeySet.forEach(str -> {
+			List<Business> businesses = map2.get(str);
+			Objects.requireNonNull(cityStateList.stream()
+					.filter(cityState -> str.equals(cityState.getName()))
+					.findAny().orElse(null)).setBusinessList(businesses);
+		});
 
 		// STEP 4 NEW IMPLEMENTATION END//
 		newStep4Time = System.nanoTime() - newStep4Time;
@@ -361,14 +409,19 @@ public class YelpProjectApplication {
 			cityState.setCategoryList(categoriesList);
 			cityState.setCategoryFrequency(frequencyMap);
 		}
+
+//		System.out.println(cityStateList);
+
 		// STEP 5 OLD IMPLEMENTATION END//
 		oldStep5Time = System.nanoTime() - oldStep5Time;
 		oldImplementationTimes += "\nStep 5 time elapsed: " + oldStep5Time;
 		totalOldTime += oldStep5Time;
 
 		// STEP 5 NEW IMPLEMENTATION START//
+		System.out.println("5N");
 		long newStep5Time = System.nanoTime();
 		//TODO step 5 new implementation code goes here
+
 
 		// STEP 5 NEW IMPLEMENTATION END//
 		newStep5Time = System.nanoTime() - newStep5Time;
@@ -487,7 +540,7 @@ public class YelpProjectApplication {
 			TypeReference<List<Business>> typeReference = new TypeReference<List<Business>>(){};
 
 //			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business-mexican-turkish-only.json");
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/business/business/business_dataset.json");
 
 			try {
 				List<Business> businesses = mapper.readValue(inputStream,typeReference);
@@ -509,7 +562,7 @@ public class YelpProjectApplication {
 			TypeReference<List<CheckIn>> typeReference = new TypeReference<List<CheckIn>>(){};
 
 //			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin-mexican-turkish-only.json");
-			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin_dataset.json");
+			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin/checkin_dataset.json");
 
 			try {
 				List<CheckIn> checkIns = mapper.readValue(inputStream,typeReference);

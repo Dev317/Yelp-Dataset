@@ -22,6 +22,10 @@ public class BusinessService {
         return repository.findAll();
     }
 
+    public List<BusinessCheckInDTO> listByCategory(String category) {
+        return repository.findByCategoryType(category);
+    }
+
     public List<Business> save(List<Business> list) {
         return repository.saveAll(list);
     }
