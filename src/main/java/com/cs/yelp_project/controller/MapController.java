@@ -195,7 +195,7 @@ public class MapController {
 
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
+		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds + "s";
 		System.out.println("Time elapsed for v3: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
@@ -238,7 +238,7 @@ public class MapController {
 
 
     @GetMapping("/mapv2/{categoriesArray}")
-	public String main(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
+	public String main2(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
 		System.gc();
 
 		Runtime runtime = Runtime.getRuntime();
@@ -392,8 +392,8 @@ public class MapController {
 		model.addAttribute("citySet", objList.toArray());
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
-		System.out.println("Time elapsed for v3: " + implementationTimes);
+		String implementationTimes = "Total time elapsed for v2: " + timeInSeconds + "s";
+		System.out.println("Time elapsed for v2: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
@@ -676,8 +676,8 @@ public class MapController {
 		model.addAttribute("citySet", objList.toArray());
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
-		System.out.println("Time elapsed for v3: " + implementationTimes);
+		String implementationTimes = "Total time elapsed for v1: " + timeInSeconds + "s";
+		System.out.println("Time elapsed for v1: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
@@ -949,8 +949,8 @@ public class MapController {
         model.addAttribute("cityStates", objList.toArray());
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v1: " + timeInSeconds;
-		System.out.println("Time elapsed for v1: " + implementationTimes);
+		String implementationTimes = "Total time elapsed for v0: " + timeInSeconds + "s";
+		System.out.println("Time elapsed for v0: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
