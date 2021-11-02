@@ -129,7 +129,7 @@ public class MapController {
 
 		List<Record> records = createRecords(citySet, kMeansCategories);
 
-		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 7, new EuclideanDistance(), 1000);
+		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 100000);
 
 		HashMap<Integer, String> colorCode = new HashMap<>();
 		colorCode.put(1,"blue");
@@ -165,6 +165,8 @@ public class MapController {
 		}
 
 		for (Centroid centroid : clusters.keySet()) {
+			System.out.println(colorCode.get(colorCounter));
+			System.out.println(centroid.toString());
 			for (Record record : clusters.get(centroid)) {
 				Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
 
