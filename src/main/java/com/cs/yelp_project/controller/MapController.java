@@ -45,6 +45,162 @@ public class MapController {
     @Value("${welcome.message}")
     private String message;
 
+	@GetMapping("/mapv3/{categoriesArray}")
+	public String main3(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
+		model.addAttribute("message", message);
+
+		List<Object[]> objList = new ArrayList<>();
+
+		List<Business> businessList = businessService.list();
+		List<CheckIn> checkInList = checkInService.list();
+		Set<String> cityNameSet = new HashSet<>();
+		Set<City> citySet = new HashSet<>();
+		Map<String, City> cityMap = new TreeMap<>();
+
+		Map<String, Integer> checkInMap = new TreeMap<>();
+		for (CheckIn checkIn : checkInList) {
+			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
+		}
+
+		for (Business business : businessList) {
+			String businessCityName = business.getCity() + business.getState();
+
+			String businessCategoryString = business.getCategories();
+			String[] businessCategoryStringArray = parse(businessCategoryString);
+
+			// Getting the business total checkins
+			int businessCheckin = 0;
+			try {
+				business.setTotalCheckin(checkInMap.get(business.getBusiness_id()));
+			} catch (NullPointerException e) {
+				System.out.println("Business " + business.getBusiness_id() + " does not have enough checkins.");
+				continue;
+			}
+			businessCheckin = business.getTotalCheckin();
+
+			// Check if cityNameSet has the businessCityName
+			if (!cityNameSet.contains(businessCityName)) {
+				cityNameSet.add(businessCityName);
+
+				// Created a new city object
+				City newCity = new City(businessCityName);
+
+				// Add the business into the newly created city object's business set
+				Set<Business> newCityBusinessSet = new HashSet<>();
+				newCityBusinessSet.add(business);
+				newCity.setBusinessSet(newCityBusinessSet);
+
+				// Create a new categoryFrequency map
+				Map<String, Integer> categoryFrequency = new TreeMap<>();
+				for (String category : businessCategoryStringArray) {
+					categoryFrequency.put(category, businessCheckin);
+				}
+				newCity.setCategoryFrequency(categoryFrequency);
+
+				// add city new city into map
+				cityMap.put(businessCityName, newCity);
+			} else {
+
+				// Retrieve the business city from the cityMap
+				City currentCity = cityMap.get(businessCityName);
+
+				// Update the city's current businessSet
+				Set<Business> currentCityBusinessSet = currentCity.getBusinessSet();
+				currentCityBusinessSet.add(business);
+				currentCity.setBusinessSet(currentCityBusinessSet);
+
+				// Update the city's current categoryFrequency map
+				Map<String, Integer> currentCityCategoryFrequency = currentCity.getCategoryFrequency();
+				for (String category : businessCategoryStringArray) {
+					if (currentCityCategoryFrequency.containsKey(category)) {
+						int newFrequency = currentCityCategoryFrequency.get(category) + businessCheckin;
+						currentCityCategoryFrequency.put(category, newFrequency);
+					}
+				}
+				currentCity.setCategoryFrequency(currentCityCategoryFrequency);
+			}
+		}
+
+		List<Record> records = createRecordsFromMap(cityMap, kMeansCategories);
+
+		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 7, new EuclideanDistance(), 1000);
+
+		HashMap<Integer, String> colorCode = new HashMap<>();
+		colorCode.put(1,"blue");
+		colorCode.put(2,"pink");
+		colorCode.put(3,"purple");
+		colorCode.put(4,"red");
+		colorCode.put(5,"yellow");
+		colorCode.put(6,"green");
+		colorCode.put(7,"brown");
+
+		Integer colorCounter = 1;
+
+		// Printing the cluster configuration
+		clusters.forEach((key, value) -> {
+			System.out.println("-------------------------- CLUSTER ----------------------------");
+
+			// Sorting the coordinates to see the most significant tags first.
+			System.out.println(key.toString());
+
+			for (Record record : value) {
+				System.out.print(record.getDescription());
+				System.out.print("-");
+			}
+
+			System.out.println();
+			System.out.println();
+		});
+
+		List<CityCoords> cityCoordsList = cityCoordsService.list();
+		Map<String, Double[]> cityCoordsMap = new HashMap<>();
+		for (CityCoords cityCoords : cityCoordsList) {
+			String cityNameWithStateLower = (cityCoords.getCity() + cityCoords.getState()).toLowerCase();
+			cityCoordsMap.put(cityNameWithStateLower, new Double[]{cityCoords.getLatitude(), cityCoords.getLongitude()});
+		}
+
+		for (Centroid centroid : clusters.keySet()) {
+			for (Record record : clusters.get(centroid)) {
+				Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
+
+				if (coordinates != null) {
+					objList.add(new Object[]{record.getDescription(), coordinates[0], coordinates[1], colorCode.get(colorCounter)});
+				}
+
+			}
+			colorCounter++;
+		}
+
+		model.addAttribute("citySet", objList.toArray());
+
+		return "index1";
+	}
+
+	public List<Record> createRecordsFromMap(Map<String, City> cityMap, String[] tags) throws IOException {
+		List<Record> records = new ArrayList<>();
+		Set<String> keySet = cityMap.keySet();
+
+		for (String cityName : keySet) {
+			City city = cityMap.get(cityName);
+
+			Map<String, Integer> currentCategoryFrequency = city.getCategoryFrequency();
+			Map<String, Double> tagMap = new HashMap<>();
+
+			for (String key : tags) {
+				if (currentCategoryFrequency.get(key) != null) {
+					tagMap.put(key,currentCategoryFrequency.get(key).doubleValue());
+				} else {
+					tagMap.put(key, .0);
+				}
+			}
+
+			// Only keep popular tags.
+			records.add(new Record(cityName,tagMap));
+		}
+
+		return records;
+	}
+
 
     @GetMapping("/mapv2/{categoriesArray}")
 	public String main(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
