@@ -47,7 +47,10 @@ public class MapController {
 
 	@GetMapping("/mapv3/{categoriesArray}")
 	public String main3(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
-
+		System.gc();
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+		System.out.println("Used Memory before: " + usedMemoryBefore);
 		long time = System.nanoTime();
 		model.addAttribute("message", message);
 
@@ -57,7 +60,6 @@ public class MapController {
 		// Retrieving business objects and checkin objects from database
 		List<Business> businessList = businessService.list();
 		List<CheckIn> checkInList = checkInService.list();
-
 
 		Set<String> cityNameSet = new HashSet<>();
 		Map<String, City> cityMap = new TreeMap<>();
@@ -193,8 +195,14 @@ public class MapController {
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
 		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
 		System.out.println("Time elapsed for v3: " + implementationTimes);
-		model.addAttribute("timeTaken", implementationTimes);
 
+		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		System.out.println(memoryUsed);
+
+		model.addAttribute("timeTaken", implementationTimes);
+		model.addAttribute("memoryUsed", memoryUsed);
+		System.gc();
 		return "index1";
 	}
 
@@ -226,7 +234,11 @@ public class MapController {
 
     @GetMapping("/mapv2/{categoriesArray}")
 	public String main(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
+		System.gc();
 
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+		System.out.println("Used Memory before: " + usedMemoryBefore);
 		long time = System.nanoTime();
 		model.addAttribute("message", message);
 
@@ -373,9 +385,17 @@ public class MapController {
 		model.addAttribute("citySet", objList.toArray());
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v2: " + timeInSeconds;
-		System.out.println("Time elapsed for v2: " + implementationTimes);
+		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
+		System.out.println("Time elapsed for v3: " + implementationTimes);
+
+		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		System.out.println(memoryUsed);
+
 		model.addAttribute("timeTaken", implementationTimes);
+		model.addAttribute("memoryUsed", memoryUsed);
+		System.gc();
+
 		return "index1";
 	}
 
@@ -411,7 +431,12 @@ public class MapController {
 
     @GetMapping("/mapv1/{categoriesArray}")
     public String main1(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
-        long time = System.nanoTime();
+		System.gc();
+
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+		System.out.println("Used Memory before: " + usedMemoryBefore);
+		long time = System.nanoTime();
 		model.addAttribute("message", message);
 		// For html templating later on
 		List<Object[]> objList = new ArrayList<>();
@@ -644,14 +669,27 @@ public class MapController {
 		model.addAttribute("citySet", objList.toArray());
 
 		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v1: " + timeInSeconds;
-		System.out.println("Time elapsed for v1: " + implementationTimes);
+		String implementationTimes = "Total time elapsed for v3: " + timeInSeconds;
+		System.out.println("Time elapsed for v3: " + implementationTimes);
+
+		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		System.out.println(memoryUsed);
+
 		model.addAttribute("timeTaken", implementationTimes);
+		model.addAttribute("memoryUsed", memoryUsed);
+		System.gc();
+
 		return "index1";
 	}
 
     @GetMapping("/mapv0/{categoriesArray}")
     public String main0(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
+		System.gc();
+
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+		System.out.println("Used Memory before: " + usedMemoryBefore);
 		long time = System.nanoTime();
 		model.addAttribute("message", message);
 
@@ -903,10 +941,18 @@ public class MapController {
 
         model.addAttribute("cityStates", objList.toArray());
 
-        double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
-		String implementationTimes = "Total time elapsed for v0: " + timeInSeconds;
-		System.out.println("Time elapsed for v0: " + implementationTimes);
+		double timeInSeconds = (System.nanoTime() - time) / 1_000_000_000;
+		String implementationTimes = "Total time elapsed for v1: " + timeInSeconds;
+		System.out.println("Time elapsed for v1: " + implementationTimes);
+
+		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		System.out.println(memoryUsed);
+
 		model.addAttribute("timeTaken", implementationTimes);
+		model.addAttribute("memoryUsed", memoryUsed);
+		System.gc();
+
 		return "index1";
     }
 

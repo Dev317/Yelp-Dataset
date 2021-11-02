@@ -40,6 +40,10 @@ public class YelpProjectApplication {
 	@Bean
 	CommandLineRunner runnerBusiness(BusinessService businessService) {
 		return args -> {
+			System.gc();
+			Runtime runtime = Runtime.getRuntime();
+			long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+			System.out.println("Used Memory before: " + usedMemoryBefore);
 
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
@@ -55,14 +59,20 @@ public class YelpProjectApplication {
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
-
+			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			System.out.println(memoryUsed);
+			System.gc();
 		};
 	}
 
 	@Bean
 	CommandLineRunner runnerCheckIn(CheckInService checkinService) {
 		return args -> {
-
+			System.gc();
+			Runtime runtime = Runtime.getRuntime();
+			long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+			System.out.println("Used Memory before: " + usedMemoryBefore);
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<List<CheckIn>> typeReference = new TypeReference<List<CheckIn>>(){};
 			InputStream inputStream = TypeReference.class.getResourceAsStream("/checkin/checkin_dataset.json");
@@ -74,12 +84,21 @@ public class YelpProjectApplication {
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
+
+			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			System.out.println(memoryUsed);
+			System.gc();
 		};
 	}
 
 	@Bean
 	CommandLineRunner runnerCityCoords(CityCoordsService cityCoordsService) {
 		return args -> {
+			System.gc();
+			Runtime runtime = Runtime.getRuntime();
+			long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+			System.out.println("Used Memory before: " + usedMemoryBefore);
 
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
@@ -95,6 +114,10 @@ public class YelpProjectApplication {
 				System.out.println(e.getMessage());
 			}
 
+			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			System.out.println(memoryUsed);
+			System.gc();
 		};
 	}
 }
