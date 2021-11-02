@@ -23,6 +23,9 @@
         <h2>
             <span th:text="'Hello, ' + ${message}"></span>
         </h2>
+        <h3>
+            <span th:text = "${timeTaken}"></span>
+        </h3>
     </div>
 
     <div id="map" style="height: 500px; width: auto;">
@@ -41,8 +44,8 @@
 
         function InitMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 6,
-                center: new google.maps.LatLng(37.090240, -95.712891),
+                zoom: 10,
+                center: new google.maps.LatLng(30.266666, -97.733330),
                 // mapTypeId: google.maps.MapTypeId.ROADMAP
             });
             var infowindow = new google.maps.InfoWindow();
