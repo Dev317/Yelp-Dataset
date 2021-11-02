@@ -13,11 +13,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>yelp_project</name>
 	<description>Yelp Project</description>
+
 	<properties>
 		<java.version>11</java.version>
 		<bootstrap.version>4.2.1</bootstrap.version>
-
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

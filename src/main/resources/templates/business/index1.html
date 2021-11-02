@@ -20,7 +20,6 @@
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>Spring Boot Web Thymeleaf Example</h1>
         <h2>
             <span th:text="'Hello, ' + ${message}"></span>
         </h2>
@@ -42,7 +41,7 @@
 
         function InitMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
+                zoom: 6,
                 center: new google.maps.LatLng(37.090240, -95.712891),
                 // mapTypeId: google.maps.MapTypeId.ROADMAP
             });

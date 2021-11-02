@@ -1,12 +1,9 @@
 package com.cs.yelp_project.business;
 
-import com.cs.yelp_project.citystate.CityState;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.List;
 
 import javax.persistence.*;
 

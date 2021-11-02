@@ -1,11 +1,9 @@
 package com.cs.yelp_project.business;
 
-import com.cs.yelp_project.citystate.CityState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter

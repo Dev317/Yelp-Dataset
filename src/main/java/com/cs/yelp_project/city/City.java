@@ -1,4 +1,4 @@
-package com.cs.yelp_project.citystate;
+package com.cs.yelp_project.city;
 
 import com.cs.yelp_project.business.Business;
 import com.cs.yelp_project.business.Category;
@@ -7,30 +7,32 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Component
-public class CityState {
+public class City {
 
     @Id
     private String name;
 
     private List<Business> businessList;
+    private Set<Business> businessSet;
+
 
     private List<Category> categoryList;
+    private Set<Category> categorySet;
 
     private Map<String, Integer> categoryFrequency;
 
-    public CityState() {}
+    public City() {}
 
-    public CityState(String name) {
+    public City(String name) {
         this.name = name;
     }
 }
