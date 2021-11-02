@@ -60,7 +60,7 @@ public class YelpProjectApplication {
 				System.out.println(e.getMessage());
 			}
 			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 			System.out.println(memoryUsed);
 			System.gc();
 		};
@@ -86,7 +86,7 @@ public class YelpProjectApplication {
 			}
 
 			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 			System.out.println(memoryUsed);
 			System.gc();
 		};
@@ -115,7 +115,7 @@ public class YelpProjectApplication {
 			}
 
 			long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-			String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+			String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 			System.out.println(memoryUsed);
 			System.gc();
 		};

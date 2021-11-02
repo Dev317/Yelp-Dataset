@@ -141,6 +141,8 @@ public class MapController {
 			}
 		}
 
+		// Implementing K means
+		// Time complexity : O(nml)
 		List<Record> records = createRecordsFromMap(cityMap, kMeansCategories);
 
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 10000);
@@ -197,7 +199,7 @@ public class MapController {
 		System.out.println("Time elapsed for v3: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 		System.out.println(memoryUsed);
 
 		model.addAttribute("timeTaken", implementationTimes);
@@ -206,6 +208,9 @@ public class MapController {
 		return "index1";
 	}
 
+	// Time complexity: O(n^2)
+	// Loop through keySet of cityMap : O(n)
+	// 		Loop through the tag key to update the frequency : O(n)
 	public List<Record> createRecordsFromMap(Map<String, City> cityMap, String[] tags) throws IOException {
 		List<Record> records = new ArrayList<>();
 		Set<String> keySet = cityMap.keySet();
@@ -333,6 +338,8 @@ public class MapController {
 			}
 		}
 
+		// Implementing K means
+		// Time Complexity: O(nml)
 		List<Record> records = createRecordsFromSet(citySet, kMeansCategories);
 
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 100000);
@@ -389,7 +396,7 @@ public class MapController {
 		System.out.println("Time elapsed for v3: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 		System.out.println(memoryUsed);
 
 		model.addAttribute("timeTaken", implementationTimes);
@@ -673,7 +680,7 @@ public class MapController {
 		System.out.println("Time elapsed for v3: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 		System.out.println(memoryUsed);
 
 		model.addAttribute("timeTaken", implementationTimes);
@@ -946,7 +953,7 @@ public class MapController {
 		System.out.println("Time elapsed for v1: " + implementationTimes);
 
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-		String memoryUsed = "Memory increased:" + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
+		String memoryUsed = "Memory increased: " + (usedMemoryAfter-usedMemoryBefore)/ 1000000 + "MB";
 		System.out.println(memoryUsed);
 
 		model.addAttribute("timeTaken", implementationTimes);
