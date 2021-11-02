@@ -56,9 +56,9 @@ public class MapController {
 		List<CheckIn> checkInList = checkInService.list();
 		Set<String> cityNameSet = new HashSet<>();
 		Set<City> citySet = new HashSet<>();
-		Map<String, City> cityMap = new TreeMap<>();
+		Map<String, City> cityMap = new HashMap<>();
 
-		Map<String, Integer> checkInMap = new TreeMap<>();
+		Map<String, Integer> checkInMap = new HashMap<>();
 		for (CheckIn checkIn : checkInList) {
 			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
 		}
@@ -92,7 +92,7 @@ public class MapController {
 				newCity.setBusinessSet(newCityBusinessSet);
 
 				// Create a new categoryFrequency map
-				Map<String, Integer> categoryFrequency = new TreeMap<>();
+				Map<String, Integer> categoryFrequency = new HashMap<>();
 				for (String category : businessCategoryStringArray) {
 					categoryFrequency.put(category, businessCheckin);
 				}
@@ -217,7 +217,7 @@ public class MapController {
 		Set<String> cityNameSet = new HashSet<>();
 		Set<City> citySet = new HashSet<>();
 
-		Map<String, Integer> checkInMap = new TreeMap<>();
+		Map<String, Integer> checkInMap = new HashMap<>();
 		for (CheckIn checkIn : checkInList) {
 			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
 		}
@@ -251,7 +251,7 @@ public class MapController {
 				newCity.setBusinessSet(newCityBusinessSet);
 
 				// Create a new categoryFrequency map
-				Map<String, Integer> categoryFrequency = new TreeMap<>();
+				Map<String, Integer> categoryFrequency = new HashMap<>();
 				for (String category : businessCategoryStringArray) {
 					categoryFrequency.put(category, businessCheckin);
 				}
@@ -287,7 +287,7 @@ public class MapController {
 			}
 		}
 
-		List<Record> records = createRecords(citySet, kMeansCategories);
+		List<Record> records = createRecordsFromSet(citySet, kMeansCategories);
 
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 7, new EuclideanDistance(), 1000);
 
@@ -343,7 +343,7 @@ public class MapController {
 		return "index1";
 	}
 
-	public List<Record> createRecords(Set<City> citySet, String[] tags) throws IOException {
+	public List<Record> createRecordsFromSet(Set<City> citySet, String[] tags) throws IOException {
 		List<Record> records = new ArrayList<>();
 
 		for (City city : citySet) {
@@ -375,15 +375,12 @@ public class MapController {
         // For html templating later on
         List<Object[]> objList = new ArrayList<>();
 
-        List<City> cityList = new ArrayList<>();
 		Set<City> citySet = new HashSet<>();
-        List<Category> categoryList = new ArrayList<>();
         List<Business> businessList = businessService.list();
         List<CheckIn> checkInList = checkInService.list();
 
 
 		// STEP 1 NEW IMPLEMENTATION START//
-		long newStep1Time = System.nanoTime();
 		Map<String, Integer> checkInMap = new TreeMap<>();
 		for (CheckIn checkIn : checkInList) {
 			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
@@ -397,7 +394,6 @@ public class MapController {
 		}
 
 		// STEP 2 NEW IMPLEMENTATION START//
-		long newStep2Time = System.nanoTime();
 		//TODO step 2 new implementation code goes here
 		Set<String> catWord = new HashSet<>();
 		Map<String, Set<String>> businessCatMap = new HashMap<>();
@@ -411,7 +407,6 @@ public class MapController {
 			businessCatMap.put(business.getBusiness_id(), catName);
 		}
 		// STEP 3 NEW IMPLEMENTATION START//
-		long newStep3Time = System.nanoTime();
 		//TODO step 3 new implementation code goes here
 		Set<String> cityNameSet = new HashSet<>();
 		for (Business business : businessList) {
@@ -493,7 +488,7 @@ public class MapController {
 		}
 
         // Implementing K means
-        List<Record> records = createRecords(cityList, kMeansCategories);
+        List<Record> records = createRecordsFromSet(citySet, kMeansCategories);
 
         Map<Centroid, List<Record>> clusters = KMeans.fit(records, 7, new EuclideanDistance(), 1000);
 
