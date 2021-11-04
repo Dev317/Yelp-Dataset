@@ -27,13 +27,25 @@ Final Product: </br>
 URL: http://localhost:8080/mapv3/Mexican,Kebab </br>
 </br>
 ![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/map.PNG)
-
+Clustering results can be observed on the rendered Google map with locations, that have same pin color, belong to a cluster. </br>
 
 <h1>Experimental Results</h1>
 
-`Time measurement` and `memory usage` can be observed on the web app and at the terminal when running the Spring Boot app. </br>
+`Time measurement` and `Memory usage` can be observed on the web app and at the terminal when running the Spring Boot app. </br>
 </br>
-![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Inkedmap_LI.jpg)
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Webapp%20experimental%20result.jpg)
 </br>
 
-Clustering results can be observed on the rendered Google map with locations, that have same pin color, belong to a cluster. </br>
+<h2>Terminal record</h2>
+
+`Algorithm` 
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Algorithm%20Time%20and%20Memory%20Usage%20Capture.png) </br>
+
+`Business Memory Usage`
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Business%20Memory%20Usage%20Capture.png) </br>
+
+`Checkin Memory Usage`
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Checkin%20Memory%20Usage%20Capture.png) </br>
+
+`City Coordinates Memory Usage`
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/CityCoords%20Memory%20Usage%20Capture.png) </br>
