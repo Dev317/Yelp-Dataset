@@ -27,3 +27,13 @@ Final Product: </br>
 URL: http://localhost:8080/mapv3/Mexican,Kebab </br>
 </br>
 ![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/map.PNG)
+
+
+<h1>Experimental Results</h1>
+
+`Time measurement` and `memory usage` can be observed on the web app and at the terminal when running the Spring Boot app. </br>
+</br>
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/Inkedmap_LI.jpg)
+</br>
+
+Clustering results can be observed on the rendered Google map with locations, that have same pin color, belong to a cluster. </br>
