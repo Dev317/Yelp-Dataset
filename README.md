@@ -11,23 +11,26 @@ The dataset is not in proper JSON structure and are not clearly labelled so it i
 
 Yelp dataset consists of 5 smaller files which are `yelp_academic_dataset_business.json`, `yelp_academic_dataset_checkin.json`, `yelp_academic_dataset_review.json`, `yelp_academic_dataset_tip.json` and `yelp_academic_dataset_user.json`. Java classes that represent each JSON file will be created.
 
+<h1> How to compile and run Spring Boot App</h1>
+
 Currently, the `yelp_academic_dataset_business.json` and `yelp_academic_dataset_checkin.json` have been cleaned up and renamed as `business_dataset.json` and `checkin_dataset.json` </br>
 
 The dataset will be parsed in Spring Boot Application and pushed to an in memory H2 database.</br>
 Thus all you need to do to get the data into Java classes is just simply extract the data file in resources, e.g `business.zip` and run the Spring Boot Application!
 
-To display the clustering algorithm, just need to call the api from the MapController, eg: </br> 
-    `localhost:8080/mapv{versionNumber}/{categoriesArray}` to use different implementations and cluster according to different categories.
+To display the clustering algorithm, just need to call the API from the MapController. 
+</br> Eg: `localhost:8080/mapv{versionNumber}/{categoriesArray}` to use different implementations and cluster according to different categories.
 
 !! Note that: </br>
 <li> mapv0 : the original implementation which might take 8-10 minutes
 <li> mapv1 to mapv3 : optimized implementation which takes around 10 secs or less 
     
-Final Product: </br>
-URL: http://localhost:8080/mapv3/Mexican,Kebab </br>
+<h1>Final Product</h1>
+    
+Test URL: http://localhost:8080/mapv3/Mexican,Kebab </br>
+Clustering results can be observed on the rendered Google map with locations, that have same pin color, belong to a cluster. </br>
 </br>
 ![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/map.PNG)
-Clustering results can be observed on the rendered Google map with locations, that have same pin color, belong to a cluster. </br>
 
 <h1>Experimental Results</h1>
 
