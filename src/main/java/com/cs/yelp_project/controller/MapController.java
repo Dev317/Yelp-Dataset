@@ -77,10 +77,10 @@ public class MapController {
 		 * 		Retrieve business categoryString : O(1) operation
 		 * 		Parse the categoryString to get all the categories: O(n)
 		 *
-		 * 		update each business checkin : O(1) operation
-		 * 		check if cityNameSet already has businessCityName : O(1) opeartion
-		 * 			loop through the categoryString and update city's category set: O(n)
-		 * 			update the frequency of each category: O(1) operation
+		 * 		Update each business checkin : O(1) operation
+		 * 		Check if cityNameSet already has businessCityName : O(1) opeartion
+		 * 			Loop through the categoryString and update city's category set: O(n)
+		 * 			Update the frequency of each category: O(1) operation
 		 * */
 		for (Business business : businessList) {
 			String businessCityName = (business.getCity() + "-" + business.getState()).toLowerCase();
@@ -142,9 +142,8 @@ public class MapController {
 		}
 
 		// Implementing K means
-		// Time complexity : O(nml)
+		// Time complexity : O(nml) ~ based on research
 		List<Record> records = createRecordsFromMap(cityMap, kMeansCategories);
-
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 10000);
 
 		HashMap<Integer, String> colorCode = new HashMap<>();
@@ -172,6 +171,10 @@ public class MapController {
 			System.out.println();
 		});
 
+		/* Time Complexity: O(n)
+		 * Loop through the city coordinate list: O(n)
+		 * 		Create a map with key as name of city and value as the coordinates
+		 * */
 		List<CityCoords> cityCoordsList = cityCoordsService.list();
 		Map<String, Double[]> cityCoordsMap = new HashMap<>();
 		for (CityCoords cityCoords : cityCoordsList) {
@@ -179,6 +182,11 @@ public class MapController {
 			cityCoordsMap.put(cityNameWithStateLower, new Double[]{cityCoords.getLatitude(), cityCoords.getLongitude()});
 		}
 
+		/* Time Complexity: O(n^2)
+		 * Loop through the found cluster list: O(n)
+		 * 			Loop through the record list in each cluster: O(n)
+		 * 				Create a new object with city name and respective coordinates and color code
+		 * */
 		for (Centroid centroid : clusters.keySet()) {
 			for (Record record : clusters.get(centroid)) {
 				Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
@@ -248,14 +256,13 @@ public class MapController {
 		model.addAttribute("message", message);
 
 		List<Object[]> objList = new ArrayList<>();
-
 		List<Business> businessList = businessService.list();
 		List<CheckIn> checkInList = checkInService.list();
 		Set<String> cityNameSet = new HashSet<>();
 		Set<City> citySet = new HashSet<>();
 
 		// Time Complexity: O(n)
-		// Loop through the checkInList with n number of CheckIn objects
+		// Loop through the checkInList: O(n)
 		//			create a new mapping for each CheckIn and its respective number of Check-In
 		Map<String, Integer> checkInMap = new TreeMap<>();
 
@@ -264,14 +271,14 @@ public class MapController {
 		}
 
 		/* Time Complexity: O(n^2)
-		* Loop through the businessList with n number of business objects
-		* 		Retrieve business categoryString : O(1) operation
+		* Loop through the businessList: O(n)
+		* 		Retrieve business categoryString : O(1)
 		* 		Parse the categoryString to get all the categories: O(n)
 		*
-		* 		update each business checkin : O(1) operation
-		* 		check if cityNameSet already has businessCityName : O(1) opeartion
-		* 			loop through the categoryString and update city's category set: O(n)
-		* 			update the frequency of each category: O(1) operation
+		* 		Update each business checkin : O(1)
+		* 		Check if cityNameSet already has businessCityName : O(1)
+		* 			Loop through the categoryString and update city's category set: O(n)
+		* 			Update the frequency of each category: O(1)
 		* */
 		for (Business business : businessList) {
 			String businessCityName = business.getCity();
@@ -339,9 +346,8 @@ public class MapController {
 		}
 
 		// Implementing K means
-		// Time Complexity: O(nml)
+		// Time Complexity: O(nml) ~ based on research
 		List<Record> records = createRecordsFromSet(citySet, kMeansCategories);
-
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 100000);
 
 		HashMap<Integer, String> colorCode = new HashMap<>();
@@ -369,14 +375,22 @@ public class MapController {
 			System.out.println();
 		});
 
+		/* Time Complexity: O(n)
+		 * Loop through the city coordinate list: O(n)
+		 * 		Create a map with key as name of city and value as the coordinates
+		 * */
 		List<CityCoords> cityCoordsList = cityCoordsService.list();
 		Map<String, Double[]> cityCoordsMap = new HashMap<>();
 		for (CityCoords cityCoords : cityCoordsList) {
 			cityCoordsMap.put(cityCoords.getCity().toLowerCase(), new Double[]{cityCoords.getLatitude(), cityCoords.getLongitude()});
 		}
 
+		/* Time Complexity: O(n^2)
+		 * Loop through the found cluster list: O(n)
+		 * 			Loop through the record list in each cluster: O(n)
+		 * 				Create a new object with city name and respective coordinates and color code
+		 * */
 		for (Centroid centroid : clusters.keySet()) {
-			System.out.println(colorCode.get(colorCounter));
 			System.out.println(centroid.toString());
 			for (Record record : clusters.get(centroid)) {
 				Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
@@ -384,7 +398,6 @@ public class MapController {
 				if (coordinates != null) {
 					objList.add(new Object[]{record.getDescription(), coordinates[0], coordinates[1], colorCode.get(colorCounter)});
 				}
-
 			}
 			colorCounter++;
 		}
@@ -407,10 +420,10 @@ public class MapController {
 	}
 
 	/* Time complexity: O(n^2)
-	* 	Loop through the city set : O(n)
-	* 		loop through the key set of the categoryFrequencyMap: O(n)
-	* 			update the tag map: O(1)
-	* */
+	 * 	Loop through the city set : O(n)
+	 * 		Loop through the key set of the categoryFrequencyMap: O(n)
+	 * 			Update the tag map: O(1)
+	 * */
 	public List<Record> createRecordsFromSet(Set<City> citySet, String[] tags) throws IOException {
 		List<Record> records = new ArrayList<>();
 
@@ -435,7 +448,6 @@ public class MapController {
 		return records;
 	}
 
-
     @GetMapping("/mapv1/{categoriesArray}")
     public String main1(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
 		System.gc();
@@ -454,12 +466,10 @@ public class MapController {
 		List<Business> businessList = businessService.list();
 		List<CheckIn> checkInList = checkInService.list();
 
-		/* STEP 1 NEW IMPLEMENTATION START//
-		*  loop through and map all business_id : checkintotals from checkinlist to a treemap 	n: number of checkin entries
-		* 	 loop through all businesses and retrieve the checkintotals from the tree map			m: number of business entries, O(1) treemap retrieval
-		* complexity = O(n + m) = O(n)
-		*/
-		// STEP 1 NEW IMPLEMENTATION START//
+		/* Loop through and map all business_id : checkintotals from checkinlist to a treemap 	n: number of checkin entries
+		 * 		Loop through all businesses and retrieve the checkintotals from the tree map			m: number of business entries, O(1) treemap retrieval
+		 * Complexity = O(n + m) = O(n)
+		 */
 		Map<String, Integer> checkInMap = new TreeMap<>();
 		for (CheckIn checkIn : checkInList) {
 			checkInMap.put(checkIn.getBusiness_id(), checkIn.getTotal_checkin());
@@ -471,26 +481,21 @@ public class MapController {
 				System.out.println("Business " + business.getBusiness_id() + " does not have enough checkins.");
 			}
 		}
-		// STEP 1 NEW IMPLEMENTATION END//
 
-		/* STEP 2 NEW IMPLEMENTATION START
-		 * 	create a hashset that stores all the string categories
-		 * 	create a new map where the key is the business id and the value is the business' category set
-		 *  loop through the business list : n number of businesses
-		 * 		retrieve the category string of each business : O(1) operation
-		 * 		create a new string category set
-		 * 		loop through the category string characters to parse all the categories: m number of characters
+		/* 	Create a hashset that stores all the string categories
+		 * 	Create a new map where the key is the business id and the value is the business' category set
+		 *  Loop through the business list : n number of businesses
+		 * 		Retrieve the category string of each business : O(1)
+		 * 		Create a new string category set
+		 * 		Loop through the category string characters to parse all the categories: m number of characters
 		 *
-		 *      loop through the category string array: l number of categories
-		 * 			add each category to the set : O(1) operation
-		 * 			add each category to the string category set : O(1) opeartion
+		 *      Loop through the category string array: l number of categories
+		 * 			Add each category to the set : O(1)
+		 * 			Add each category to the string category set : O(1)
 		 *
-		 * 		create a new mapping for the map with the business id and string category set: O(1) operation
-		 * complexity = O(n * (m + l))
+		 * 		Create a new mapping for the map with the business id and string category set: O(1) operation
+		 * Complexity = O(n * (m + l))
 		 */
-		// STEP 2 NEW IMPLEMENTATION START//
-		//TODO step 2 new implementation code goes here
-
 		Set<String> catWord = new HashSet<>();
 		Map<String, Set<String>> businessCatMap = new HashMap<>();
 		for (Business business : businessList) {
@@ -502,19 +507,15 @@ public class MapController {
 			}
 			businessCatMap.put(business.getBusiness_id(), catName);
 		}
-		// STEP 2 NEW IMPLEMENTATION END//
 
-		/* STEP 3 NEW IMPLEMENTATION START
-		 * new implementation:
-		 * create a hashset that contains the city names
-		 *  loop through the business list : n number of businesses
-		 * 		get the city name in each business : O(1) operation
-		 * 		check if city name is already in the list
-		 * 			if no, add to the hashset and to the city List : O(1) operation
+		/* Create a hashset that contains the city names
+		 *  	Loop through the business list : n number of businesses
+		 * 			Get the city name in each business : O(1)
+		 * 			Check if city name is already in the list
+		 * 				If no, add to the hashset and to the city List : O(1)
 		 *
 		 * complexity = O(n)
 		 */
-		// STEP 3 NEW IMPLEMENTATION START//
 		Set<String> cityNameSet = new HashSet<>();
 		for (Business business : businessList) {
 			String cityName =  (business.getCity() + "-" + business.getState()).toLowerCase();
@@ -524,25 +525,20 @@ public class MapController {
 				citySet.add(new City(cityName));
 			}
 		}
-		// STEP 3 NEW IMPLEMENTATION END//
 
-		/* STEP 4 NEW IMPLEMENTATION START
-		 * new implementation:
-		 * 	create a mapping where string city is the key and set of business is the value
-		 * 	loop through the business list: n number of businesses
-		 * 		get the city name : O(1) operation
-		 * 		check if cityName set contains such city name : O(1) operation
-		 * 			if there is, create a new mapping : O(1) operation
-		 * 			if no, update the current key-pair : O(1) operation
+		/*  Create a mapping where string city is the key and set of business is the value
+		 * 	Loop through the business list: n number of businesses
+		 * 		Get the city name : O(1)
+		 * 		Check if cityName set contains such city name : O(1)
+		 * 			If there is, create a new mapping : O(1)
+		 * 			If no, update the current key-pair : O(1)
 		 *
-		 * 	loop through the key set in the map : m number of city names
-		 * 		loop through the city set : m number of city objects
-         * 			check a city object has the same city name as the key
-         * 				if there is, update the business set of that city object
+		 * 	Loop through the key set in the map : m number of city names
+		 * 		Loop through the city set : m number of city objects
+         * 			Check a city object has the same city name as the key
+         * 				If there is, update the business set of that city object
 		 * complexity = O(n + ml)
 		 */
-
-		// STEP 4 NEW IMPLEMENTATION START//
 		Map<String, Set<Business>> cityBusinessMap = new HashMap<>();
 		for (Business business : businessList) {
 			String cityName = (business.getCity() + "-" + business.getState()).toLowerCase();
@@ -571,20 +567,18 @@ public class MapController {
 		}
 
 
-		/* STEP 5 NEW IMPLEMENTATION START//
-		 * new implementation:
-		 * 	loop through the city set : n number of cities
-		 * 		create a new freq map
-		 * 		retrieve a city business set : O(1) operation
-		 * 		create a new hash set to find all category names in a city
-		 * 		create a new hash set to find all categories in a city
+		/* Loop through the city set : n number of cities
+		 * 		Create a new freq map
+		 * 		Retrieve a city business set : O(1)
+		 * 		Create a new hash set to find all category names in a city
+		 * 		Create a new hash set to find all categories in a city
 		 *
-		 * 		loop through the city business set : m number of businesses
-		 * 			retrieve the number of checkins: O(1) operation
-		 * 			retrieve the business category set : O(1) operation
-		 * 			loop through the business category set : l number of categories
-		 * 				add new category for category name list : O(1) operation
-		 * 				add new mapping/update mapping for freq map : O(1) operation
+		 * 		Loop through the city business set : m number of businesses
+		 * 			Retrieve the number of checkins: O(1)
+		 * 			Retrieve the business category set : O(1)
+		 * 			Loop through the business category set : l number of categories
+		 * 				Add new category for category name list : O(1)
+		 * 				Add new mapping/update mapping for freq map : O(1)
 		 * Time complexity = O(nml)
 		 */
 		for (City city : citySet) {
@@ -617,17 +611,13 @@ public class MapController {
 			for (String category : categoriesInCitySet) {
 				categoriesSet.add(new Category(category));
 			}
-
 			city.setCategorySet(categoriesSet);
 			city.setCategoryFrequency(freqMap);
-
 		}
-		// STEP 5 NEW IMPLEMENTATION END//
 
 		// Implementing K means
-		// Time Complexity: O(mnl)
+		// Time Complexity: O(mnl) ~ based on research
 		List<Record> records = createRecordsFromSet(citySet, kMeansCategories);
-
 		Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 10000);
 
 		HashMap<Integer, String> colorCode = new HashMap<>();
@@ -636,7 +626,6 @@ public class MapController {
 		colorCode.put(3,"purple");
 		colorCode.put(4,"red");
 		colorCode.put(5,"yellow");
-
 
 		Integer colorCounter = 1;
 
@@ -655,12 +644,21 @@ public class MapController {
 			System.out.println();
 		});
 
+		/* Time Complexity: O(n)
+		 * Loop through the city coordinate list: O(n)
+		 * 		Create a map with key as name of city and value as the coordinates
+		 * */
 		List<CityCoords> cityCoordsList = cityCoordsService.list();
 		Map<String, Double[]> cityCoordsMap = new HashMap<>();
 		for (CityCoords cityCoords : cityCoordsList) {
 			cityCoordsMap.put((cityCoords.getCity() + "-" + cityCoords.getState()).toLowerCase(), new Double[]{cityCoords.getLatitude(), cityCoords.getLongitude()});
 		}
 
+		/* Time Complexity: O(n^2)
+		 * Loop through the found cluster list: O(n)
+		 * 			Loop through the record list in each cluster: O(n)
+		 * 				Create a new object with city name and respective coordinates and color code
+		 * */
 		for (Centroid centroid : clusters.keySet()) {
 			for (Record record : clusters.get(centroid)) {
 				Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
@@ -693,7 +691,6 @@ public class MapController {
     @GetMapping("/mapv0/{categoriesArray}")
     public String main0(Model model, @PathVariable (value = "categoriesArray") String[] kMeansCategories) throws IOException {
 		System.gc();
-
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
 		System.out.println("Used Memory before: " + usedMemoryBefore);
@@ -709,12 +706,11 @@ public class MapController {
 		List<CheckIn> checkInList = checkInService.list();
 
 		/* Step 1: assign the total check in count of a business by business_id from checkin dataset to business dataset
-		* old implementation:
-		* 	1) loop through all check in values							n: number of checkin entries
-		* 		2) loop through all businesses until a match is found 	x m: number of business entries
+		* Old implementation:
+		* 	Loop through all check in values							n: number of checkin entries
+		* 		Loop through all businesses until a match is found 	x m: number of business entries
 	 	* Time complexity = O(n * m) = O(n^2)
 		*/
-		// STEP 1 OLD IMPLEMENTATION START//
 		for (CheckIn checkIn : checkInList) {
 
 			// Get the business_id of a checkin row record
@@ -727,21 +723,17 @@ public class MapController {
 				}
 			}
 		}
-		// STEP 1 OLD IMPLEMENTATION END//
-
 
 		/* Step 2: Parse through categories of all businesses and find a list of distinct categories
-		 * old implementation:
-		 * 	loop through all businesses to their categories 		m: number of businesses
-		 *		loop through the category string characters         a: number of characters in a string
-		 * 		loop through the category string 					* (a + b): number of categories in a business
-		 * 			check if categoriesWord contains it already		* c: number of categories added so far
-		 * 	save categories 										+ c
+		 * Old implementation:
+		 * 	Loop through all businesses to their categories 		m: number of businesses
+		 *		Loop through the category string characters         a: number of characters in a string
+		 * 		Loop through the category string 					* (a + b): number of categories in a business
+		 * 			Check if categoriesWord contains it already		* c: number of categories added so far
+		 * 	Save categories 										+ c
 		 * Time complexity = O(m * (a + b) * c + c) = O(n^3)
 		 * estimate: O(m * 10 * b + b) = O(n^2) since number of categories usually < 10
 		 */
-		// STEP 2 OLD IMPLEMENTATION START//
-
 		// Getting all the categories and store into database
 		List<String> categoriesWord = new ArrayList<>();
 		for (Business business : businessList) {
@@ -756,15 +748,13 @@ public class MapController {
 		for (String cat: categoriesWord) {
 			categoryService.save(new Category(cat));
 		}
-		// STEP 2 OLD IMPLEMENTATION END//
 
 		/* Step 3: get all the cities
-		 * old implementation:
-		 * 	loop through all businesses to get their city 			m: number of businesses
-		 * 			check if cityNameList contains it already		* c: number of cities added so far
-		 * complexity = O(m * c) = O(n^2)
+		 * Old implementation:
+		 * 	Loop through all businesses to get their city 			m: number of businesses
+		 * 			Check if cityNameList contains it already		* c: number of cities added so far
+		 * Complexity = O(m * c) = O(n^2)
 		 */
-		// STEP 3 OLD IMPLEMENTATION START//
 		// Getting all the states
 		List<String> cityNameList = new ArrayList<>();
 		for (Business business : businessList) {
@@ -775,30 +765,28 @@ public class MapController {
 				cityList.add(new City(cityName));
 			}
 		}
-		// STEP 3 OLD IMPLEMENTATION END//
 
 		/* Step 4: Get all the businesses in each state then transfer back to city object list
 		 *
-		 * old implementation:
-		 * 	created a mapping where city is the key and list of business in the specific city is the value
-		 * 	loop through the business list : n number of business entries
-		 * 		find business's city name  : O(1) operation
-		 *		loop through city name list  : m number of city names
-		 * 				check whether the found business's city name is inside: O(1) operation
-		 * 				assign to a local variable city : O(1) operation
+		 * Old implementation:
+		 * 	Created a mapping where city is the key and list of business in the specific city is the value
+		 * 	Loop through the business list : n number of business entries
+		 * 		Find business's city name  : O(1)
+		 *		Loop through city name list  : m number of city names
+		 * 				Check whether the found business's city name is inside: O(1)
+		 * 				Assign to a local variable city : O(1)
 		 *
-		 * 		check if the mapping contains that city key, if not create a new key pair value : O(1) operation
-		 * 													 if there is, update the value for the key : O(1) operation
+		 * 		Check if the mapping contains that city key, if not create a new key pair value : O(1) operation
+		 * 													 if there is, update the value for the key : O(1)
 		 *
-		 * loop through the key set in the map : m number of city names
-		 * 		retrieve the business list of each key : O(1) operation
-		 * 		loop through the city list : m number of city objects
-		 * 								find the matching city name : O(1) operation
-		 * 								update that city's latest business list : O(1) operation
+		 * Loop through the key set in the map : m number of city names
+		 * 		Retrieve the business list of each key : O(1)
+		 * 		Loop through the city list : m number of city objects
+		 * 								Find the matching city name : O(1)
+		 * 								Update that city's latest business list : O(1)
 		 *
 		 * Time complexity = O (n*m + m*m) = O(nm + m^2)
 		 */
-		// STEP 4 OLD IMPLEMENTATION START//
 		// Getting all the businesses in each city
 		Map<String, List<Business>> mapCityBusiness = new TreeMap<>();
 
@@ -837,35 +825,32 @@ public class MapController {
 			}
 		}
 
-		// STEP 4 OLD IMPLEMENTATION END//
-
 		/* Step 5: Getting all the categories in each cityState
-		 * old implementation:
-		 * 	loop through city list : n number of city objects
-		 * 		create a map where key is the category and value is the number of checkins
-		 *		retrieve list of businesses in the city: O(1) operation
-		 * 		create a new string list to find all category names in a city
-		 * 		create a new list to find all categories in a city
+		 * Old implementation:
+		 * 	Loop through city list : n number of city objects
+		 * 		Create a map where key is the category and value is the number of checkins
+		 *		Retrieve list of businesses in the city: O(1)
+		 * 		Create a new string list to find all category names in a city
+		 * 		Create a new list to find all categories in a city
 		 *
-		 * 		loop through the business list : m number of businesses
-		 * 			retrieve the business' total checkins : O(1) operation
-		 * 			retrieve the business' string category : O(1) operation
-		 * 			create a new category list
+		 * 		Loop through the business list : m number of businesses
+		 * 			Retrieve the business' total checkins : O(1)
+		 * 			Retrieve the business' string category : O(1)
+		 * 			Create a new category list
 		 *
-		 * 			loop through the string category: l number of categories
-		 * 				update the business' category list: O(1) operation
+		 * 			Loop through the string category: l number of categories
+		 * 				Update the business' category list: O(1)
 		 *
-		 * 			loop through the business' category: l number of categories
-		 * 				check if the city category list contains the category: O(1) operation
-		 * 					if not create a new key pair value: O(1) operation
-		 *					if there is, update the new checkin for each category: O(1) operation
+		 * 			Loop through the business' category: l number of categories
+		 * 				Check if the city category list contains the category: O(1)
+		 * 					If not create a new key pair value: O(1)
+		 *					If there is, update the new checkin for each category: O(1)
 		 *
-		 * 	update city's category list: O(1) operation
-		 *  update city's category frequency mapping: O(1) operation
+		 * 	Update city's category list: O(1) operation
+		 *  Update city's category frequency mapping: O(1) operation
 		 *
 		 * Time Complexity = O (n * m * (2l)) = O(nml)
 		 */
-		// STEP 5 OLD IMPLEMENTATION START//
 //		 Getting all the categories in each city
 		for (City city : cityList) {
 			Map<String,Integer> frequencyMap = new TreeMap<String,Integer >();
@@ -899,8 +884,9 @@ public class MapController {
 				}
 			}
 		}
-		// STEP 5 OLD IMPLEMENTATION END//
+
         // Implementing K means
+		// Time complexity : O(nml) ~ based on research
         List<Record> records = createRecords(cityList, kMeansCategories);
         Map<Centroid, List<Record>> clusters = KMeans.fit(records, 5, new EuclideanDistance(), 10000);
 
@@ -928,12 +914,21 @@ public class MapController {
             System.out.println();
         });
 
+		/* Time Complexity: O(n)
+		 * Loop through the city coordinate list: O(n)
+		 * 		Create a map with key as name of city and value as the coordinates
+		 * */
         List<CityCoords> cityCoordsList = cityCoordsService.list();
         Map<String, Double[]> cityCoordsMap = new HashMap<>();
         for (CityCoords cityCoords : cityCoordsList) {
             cityCoordsMap.put(cityCoords.getCity().toLowerCase(), new Double[]{cityCoords.getLatitude(), cityCoords.getLongitude()});
         }
 
+		/* Time Complexity: O(n^2)
+		 * Loop through the found cluster list: O(n)
+		 * 			Loop through the record list in each cluster: O(n)
+		 * 				Create a new object with city name and respective coordinates and color code
+		 * */
         for (Centroid centroid : clusters.keySet()) {
             for (Record record : clusters.get(centroid)) {
                 Double[] coordinates = findCoordinates(record.getDescription().toLowerCase(), cityCoordsMap);
@@ -965,7 +960,7 @@ public class MapController {
 
 	/* Time complexity: O(n)
 	 * 	Loop through the key set of the map : O(n)
-	 * 		check if the key equals to the  cityName: O(1)
+	 * 		Check if the key equals to the  cityName: O(1)
 	 * */
 	public Double[] findCoordinates(String cityName, Map<String, Double[]> cityCoordsMap) {
         for (String key : cityCoordsMap.keySet()) {
@@ -978,8 +973,8 @@ public class MapController {
 
 	/* Time complexity: O(n^2)
 	 * 	Loop through the city set : O(n)
-	 * 		loop through the key set of the categoryFrequencyMap: O(n)
-	 * 			update the tag map: O(1)
+	 * 		Loop through the key set of the categoryFrequencyMap: O(n)
+	 * 			Update the tag map: O(1)
 	 * */
     public List<Record> createRecords(List<City> cityStateList, String[] tags) throws IOException {
         List<Record> records = new ArrayList<>();
@@ -1006,7 +1001,7 @@ public class MapController {
 
 	/* Time complexity: O(n)
 	 * 	Loop through the string arr : O(n)
-	 * 		update each cell in the resultArr: O(1)
+	 * 		Update each cell in the resultArr: O(1)
 	 * */
     public String[] parse(String str) {
         String[] tempArr = str.split(", ");
