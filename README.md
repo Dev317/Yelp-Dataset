@@ -22,3 +22,8 @@ To display the clustering algorithm, just need to call the api from the MapContr
 !! Note that: </br>
 <li> mapv0 : the original implementation which might take 8-10 minutes
 <li> mapv1 to mapv3 : optimized implementation which takes around 10 secs or less 
+    
+Final Product: </br>
+URL: http://localhost:8080/mapv3/Mexican,Kebab </br>
+</br>
+![alt text](https://github.com/Dev317/Yelp-Dataset/blob/optimize-draft/map.PNG)
