@@ -21,6 +21,10 @@ Thus all you need to do to get the data into Java classes is just simply extract
 To display the clustering algorithm, just need to call the API from the MapController. 
 </br> Eg: `localhost:8080/mapv{versionNumber}/{categoriesArray}` to use different implementations and cluster according to different categories.
 
+`categoriesArray`: specify different categories e.g., Mexican, Kebabs 
+
+`map{versionNumber}`: can be any version e.g., mapv2 
+
 !! Note that: </br>
 <li> mapv0 : the original implementation which might take 8-10 minutes
 <li> mapv1 to mapv3 : optimized implementation which takes around 10 secs or less 
