@@ -16,7 +16,7 @@ Yelp dataset consists of 5 smaller files which are `yelp_academic_dataset_busine
 Currently, the `yelp_academic_dataset_business.json` and `yelp_academic_dataset_checkin.json` have been cleaned up and renamed as `business_dataset.json` and `checkin_dataset.json` </br>
 
 The dataset will be parsed in Spring Boot Application and pushed to an in memory H2 database.</br>
-Thus all you need to do to get the data into Java classes is just simply extract the data file in resources, e.g `business.zip` and run the Spring Boot Application!
+Thus all you need to do to get the data into Java classes is just simply extract the data file in resources, e.g `business.zip` (if it is still zipped) and run the Spring Boot Application!
 
 To display the clustering algorithm, just need to call the API from the MapController. 
 </br> Eg: `localhost:8080/mapv{versionNumber}/{categoriesArray}` to use different implementations and cluster according to different categories.
